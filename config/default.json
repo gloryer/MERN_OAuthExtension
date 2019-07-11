@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://shuai:lsi1131568098@cluster0-4nhxz.mongodb.net/test?retryWrites=true&w=majority",
+  "jwtSecret": "yhujgtrvbnjkiuytfdresdfghuyjiokj"
+}
