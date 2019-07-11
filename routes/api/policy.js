@@ -17,9 +17,9 @@ router.get('/',(req,res)=>{
 router.post('/',(req,res)=>{
     const{type,name, content,Default}=req.body;
 
-  /*  if(!name||!type||!content){
+    if(!name||!type||!content){
         return res.status(400).json({msg:'Please enter all fields'});
-    }*/
+    }
 
     Policy.findOne({name})
         .then(policy=>{
