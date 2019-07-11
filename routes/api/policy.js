@@ -1,6 +1,6 @@
 const express =require('express');
 const router =express.Router();
-
+const policyValidation = require('../../Middleware/PolicyValidation');
 
 
 //Item Model
@@ -14,12 +14,8 @@ router.get('/',(req,res)=>{
 
 
 //route GET api/users
-router.post('/',(req,res)=>{
+router.post('/',policyValidation,(req,res)=>{
     const{type,name, content,Default}=req.body;
-
-    if(!name||!type||!content){
-        return res.status(400).json({msg:'Please enter all fields'});
-    }
 
     Policy.findOne({name})
         .then(policy=>{
