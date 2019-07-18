@@ -10,7 +10,6 @@ function auth (req, res, next) {
         return res.status(401).json({msg: 'No token, authorization denied'});
     }
 
-
     if(token){
         try{
 

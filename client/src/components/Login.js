@@ -35,7 +35,7 @@ class LoginModal extends Component {
             }
         }
 
-        if(this.state.model){
+        if(this.state.modal){
             if(isAuthenticated==="authorized"){
                 this.toggle();
             }

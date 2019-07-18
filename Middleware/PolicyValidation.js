@@ -8,7 +8,7 @@ function policyValidation(req, res, next) {
 
 if(!type){
     return res.status(400).json({msg:"Must have 'type'"});
-}else if (!content
+} else if (!content
     ||!content.rules
     ||!(content.rules instanceof Object )
     ||(Object.keys(content.rules).length===0)){
@@ -22,8 +22,8 @@ if(!type){
     return res.status(400).json({msg:"Must have a non-empty 'Default'  object."});
 }else {
     try {
-
-        ruleValidation(content.rules)
+        typeValidation(type);
+        ruleValidation(content.rules);
         DefaultValidation(Default)
 
     } catch (err) {
@@ -34,10 +34,22 @@ if(!type){
 
 }
 
+function typeValidation(type) {
+    const typeList = ["simple-policy"];
+
+    if (!(typeList.includes(type))) {
+        throw {
+            error: "invalid_policy",
+            message: `The policy type is not supported. Current support type is ${typeList}`
+        }
+    }
+}
+
+
 function ruleValidation(rules){
     const {matchAnyOf, decision, context} = rules;
 
-    const contextList=["userlocationhome", "userlocationwork"];
+    const contextList=["clientlocationhospital", "clientlocationclinic"];
 if (!matchAnyOf) {
     throw {
         error: "invalid_policy",

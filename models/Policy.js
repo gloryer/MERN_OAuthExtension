@@ -12,7 +12,7 @@ const PolicySchema =new Schema({
             matchAnyOf:[],
             decision: {
                 authorization:String,
-                obligations:{}
+                structuredScope:{}
             },
             context: []
         },
