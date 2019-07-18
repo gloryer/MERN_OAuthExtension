@@ -30,8 +30,8 @@ function RequestEvaluation (req, res, next) {
     try{
         FieldValidation(grantType,clientAssertionType);
         console.log(claim)
-        //req.permitPolicy=accessEvaluate(claim);
-        accessEvaluate(claim);
+        req.permitPolicy=accessEvaluate(claim);
+        //accessEvaluate(claim);
         //AccessValidate(decoded);
         //console.log(decisionPool)
 
@@ -64,14 +64,14 @@ function FieldValidation(grantType,clientAssertionType){
 
 
 function accessEvaluate(claim) {
-    //let permitPolicy
+    let permitPolicy
     var decisionPool=[];
     Policy.find()
         .then(policy=>{
             policy.forEach(eachPolicy =>{
                 decisionPool.push(matchRules(claim,eachPolicy))
-                /*if (matchRules(claim,eachPolicy)==="Permit"){}
-                    permitPolicy=eachPolicy;*/
+                if (matchRules(claim,eachPolicy)==="Permit"){}
+                    permitPolicy=eachPolicy;
 
                 //console.log(decisionPool)
                 }
@@ -84,7 +84,7 @@ function accessEvaluate(claim) {
                 }
             }
 
-           // return permitPolicy
+            return permitPolicy
 
 
       })
