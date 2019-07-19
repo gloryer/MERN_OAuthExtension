@@ -29,16 +29,68 @@ function RequestEvaluation (req, res, next) {
 
     try{
         FieldValidation(grantType,clientAssertionType);
-        console.log(claim)
-        req.permitPolicy=accessEvaluate(claim);
+        //console.log(claim)
+
+        //console.log(accessEvaluate(claim));
         //accessEvaluate(claim);
         //AccessValidate(decoded);
-        //console.log(decisionPool)
+        //console.log(permitPolicy)
 
     }catch(err){
         return res.status(400).json({msg: err.message});
     }
 
+
+    // Access evaluation and token generation if access is allowed by policy
+    let permitPolicy
+    var decisionPool=[];
+
+    Policy.find()
+        .then(policy=>{
+            policy.forEach(eachPolicy =>{
+                    decisionPool.push(matchRules(claim,eachPolicy))
+                    if (matchRules(claim,eachPolicy)==="Permit"){
+                        permitPolicy=eachPolicy;}
+
+                    //console.log(decisionPool)
+                }
+            )
+            console.log(decisionPool)
+            //console.log(permitPolicy)
+            if(!(decisionPool.includes("Permit"))) {
+                throw {
+                    error: "access_denied",
+                    message: "Access denied or access not applicable",
+                }
+            }
+            //return permitPolicy
+
+            jwt.sign(
+                {
+                    expireIn: "1 day",
+                    subject: claim.client_id,
+                    audience: "http://localhost:5000/patientsResource",
+                    issuer: "http://localhost:5000/authorization",
+                    structured_scope: permitPolicy.content.rules.decision.structuredScope,
+                    context: permitPolicy.content.rules.context,
+                },
+                config.get('jwtSecret'),
+                (err,token)=>{
+                    if (err) throw {
+                        error:"token_generation_failed",
+                        message:`${err.name}`,
+                    };
+                    //console.log(token);
+                    res.json({token})
+                }
+            )
+
+
+        }).catch(err=>res.status(400).json({msg:err.name}))
+
+
+    //console.log(permitPolicy)
+    //return permitPolicy
     next()
 
 }
@@ -63,20 +115,21 @@ function FieldValidation(grantType,clientAssertionType){
 
 
 
-function accessEvaluate(claim) {
+/*function accessEvaluate(claim) {
     let permitPolicy
     var decisionPool=[];
     Policy.find()
         .then(policy=>{
             policy.forEach(eachPolicy =>{
                 decisionPool.push(matchRules(claim,eachPolicy))
-                if (matchRules(claim,eachPolicy)==="Permit"){}
-                    permitPolicy=eachPolicy;
+                if (matchRules(claim,eachPolicy)==="Permit"){
+                    permitPolicy=eachPolicy;}
 
                 //console.log(decisionPool)
                 }
             )
             console.log(decisionPool)
+            console.log(permitPolicy)
             if(!(decisionPool.includes("Permit"))) {
                 throw {
                     error: "access_denied",
@@ -84,14 +137,20 @@ function accessEvaluate(claim) {
                 }
             }
 
-            return permitPolicy
+            try{
+                tokenGeneration(permitPolicy)
+            }catch (err){
+                throw{
+                    error:"token_generation_failed",
+                    message:`${err.name}`
+            }}
 
+            //return permitPolicy
 
-      })
-    //console.log(decisionPool)
+    //console.log(permitPolicy)
+    //return permitPolicy
 
-
-}
+})}*/
 
 
 
@@ -142,22 +201,32 @@ function matchRules(claim,policy){
     }
 
 
-
-
-
-    /*const matchRuleSignature =
-        (rule.matchAnyOf.map((rule) => (
-            Object.keys(rule)
-                .map((key) => (_.isEqual(claims[key], rule[key])))
-                .reduce((acc, current) => (acc && current), true))
-        ).reduce((acc, current) => (acc || current), false));
-
-    const matchesCondition = (!rule.condition) || evaluateCondition(claims, rule.condition);
-
-    return matchesRuleSignature && matchesCondition;
-*/
 }
 
+
+/*
+function tokenGeneration(permitPolicy){
+
+        jwt.sign(
+            {
+                expireIn: "1 day",
+                subject: claim.client_id,
+                audience: "http://localhost:5000/patientsResource",
+                issuer: "http://localhost:5000/authorization",
+                structured_scope: permitPolicy.content.rules.decision.structuredScope,
+                context: permitPolicy.content.rules.context,
+            },
+            config.get('jwtSecret'),
+            (err,token)=>{
+                if (err) throw err;
+                //console.log(token);
+                var access_token=token
+            }
+        )
+
+
+
+    }*/
 
 
 //res.status(400).json({msg: 'Token is not valid'});
