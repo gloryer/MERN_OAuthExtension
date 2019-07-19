@@ -87,8 +87,6 @@ function RequestEvaluation (req, res, next) {
 
 
         }).catch(err=>res.status(400).json({msg:err.name}))
-
-
     //console.log(permitPolicy)
     //return permitPolicy
     next()
