@@ -5,10 +5,7 @@
     <bookmark url="file://$PROJECT_DIR$/routes/api/policy.js" line="17" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b210e866-bd71-48fe-af40-87961a91e5f5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api/authorization.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api/authorization.js" afterDir="false" />
-    </list>
+    <list default="true" id="b210e866-bd71-48fe-af40-87961a91e5f5" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -104,8 +101,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Middleware/RequestValidationandPolicyCheck.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2112">
-              <caret line="88" column="59" selection-start-line="88" selection-start-column="59" selection-end-line="88" selection-end-column="59" />
+            <state relative-caret-position="-3866">
+              <caret line="24" column="18" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -239,18 +236,17 @@
       <workItem from="1560540359418" duration="40849000" />
       <workItem from="1562797376031" duration="6425000" />
       <workItem from="1562811707082" duration="15944000" />
-      <workItem from="1563210451589" duration="41835000" />
+      <workItem from="1563210451589" duration="41875000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="105053000" />
+    <option name="totallyTimeSpent" value="105093000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1058" y="-265" width="1066" height="1656" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22178988" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22178988" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="npm" order="3" side_tool="true" />
@@ -264,7 +260,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="GraphQL" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49902725" visible="true" weight="0.11756847" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49902725" visible="true" weight="0.31730127" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50097275" side_tool="true" weight="0.15096861" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -550,8 +546,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Middleware/RequestValidationandPolicyCheck.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2112">
-          <caret line="88" column="59" selection-start-line="88" selection-start-column="59" selection-end-line="88" selection-end-column="59" />
+        <state relative-caret-position="-3866">
+          <caret line="24" column="18" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
         </state>
       </provider>
     </entry>
