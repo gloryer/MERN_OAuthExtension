@@ -64,10 +64,10 @@ if (!matchAnyOf) {
 } else if (context|| context === "") {
     if (!(contextList.includes(context))){
         throw {
-            error: "invalid_policy",
-            message: "Context and ESO not registered at AS"
-        };
-    }
+error: "invalid_policy",
+    message: "Context and ESO not registered at AS"
+};
+}
 }}
 
 

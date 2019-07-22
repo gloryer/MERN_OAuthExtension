@@ -21,7 +21,7 @@ function RequestEvaluation (req, res, next) {
 
     if(claimToken){
         try{
-            var claim=jwt.verify(claimToken,config.get('jwtSecret'));
+            var claim=jwt.verify(claimToken,config.get('jwtSecretClient'));
             req.decoded=claim;
         }catch(err){
             return res.status(403).json({msg:`The claim token can not be verified because of ${ err.name}`})}
@@ -69,12 +69,12 @@ function RequestEvaluation (req, res, next) {
                 {
                     expireIn: "1 day",
                     subject: claim.client_id,
-                    audience: "http://localhost:5000/patientsResource",
+                    audience: "http://localhost:4990/patientrecord",
                     issuer: "http://localhost:5000/authorization",
                     structured_scope: permitPolicy.content.rules.decision.structuredScope,
                     context: permitPolicy.content.rules.context,
                 },
-                config.get('jwtSecret'),
+                config.get('jwtSecretRS'),
                 (err,token)=>{
                     if (err) throw {
                         error:"token_generation_failed",
