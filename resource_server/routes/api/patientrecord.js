@@ -16,30 +16,37 @@ router.post('/',TokenValidation,(req,res)=>{
     const resourceType =structured_scope.resourceType
     const securityLabel = structured_scope.securityLabel
     const actions = structured_scope.actions;
-    //const patientId=resource_set_id.patientId
-    console.log(req.token)
-    console.log(structured_scope)
-    console.log(actions)
-
     let flag =0
 
     Patient.findOne({resource_set_id})
         .then(data=>{
-            //console.log(data)
+
 
             if(!data){
                 return res.status(400).json({msg: 'resource not found'});
             }
             if (data){
-                data.forEach(eachData =>{
+                dataArray=[data]
+                dataArray.forEach(eachData =>{
+                    /*console.log(eachData)
+                    console.log(resource_set_id)
+                    console.log(eachData.resource_set_id)
+                    console.log(securityLabel)
+                    console.log(eachData.securityLabel)
+                    console.log(actions)*/
+                    //console.log(eachData.actions)
+
+
                     if (_.isEqual(resourceType,eachData.resourceType )&&
                         _.isEqual(securityLabel,eachData.securityLabel)&&
-                        (actions === "read")){
+                        actionValidation(actions)
+                        ){
+                        //console.log("findone")
                         flag++
                         return res.status(400).json(eachData.content);
                     }
                 })}
-
+            console.log(flag)
             if (flag ===0){
                 return res.status(400).json({msg: 'resource not found'});
             }
@@ -48,3 +55,14 @@ router.post('/',TokenValidation,(req,res)=>{
 
 module.exports=router;
 //.catch(err=>res.status(400).json({msg:err.name}))
+
+function actionValidation(actions){
+    const match=(actions.map((element)=> {
+        if(element==="read"){
+            return true
+        }else{
+            return false
+        }}).reduce((acc, current) => (acc && current), true))
+
+    return match
+}
