@@ -18,16 +18,16 @@ router.post('/',TokenValidation,(req,res)=>{
     const actions = structured_scope.actions;
     let flag =0
 
-    Patient.findOne({resource_set_id})
+    Patient.find({resource_set_id})
         .then(data=>{
-
+            console.log(data)
 
             if(!data){
                 return res.status(400).json({msg: 'resource not found'});
             }
             if (data){
-                dataArray=[data]
-                dataArray.forEach(eachData =>{
+                //dataArray=[data]
+                data.forEach(eachData =>{
                     /*console.log(eachData)
                     console.log(resource_set_id)
                     console.log(eachData.resource_set_id)

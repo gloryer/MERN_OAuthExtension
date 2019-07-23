@@ -58,10 +58,7 @@ function RequestEvaluation (req, res, next) {
             console.log(decisionPool)
             //console.log(permitPolicy)
             if(!(decisionPool.includes("Permit"))) {
-                throw {
-                    error: "access_denied",
-                    message: "Access denied or access not applicable",
-                }
+                return res.status(401).json({msg:"Access denied or access not applicable"});
             }
             //return permitPolicy
 
