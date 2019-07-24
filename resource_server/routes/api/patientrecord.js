@@ -1,16 +1,18 @@
 const express =require('express');
 const router =express.Router();
 const TokenValidation = require('../../Middleware/TokenValidation');
+const ContextValidation=require('../../Middleware/ContextValidate')
 const _ = require("lodash");
+const axios =require("axios");
 
 
 //Item Model
 
 const Patient =require('../../models/Patient');
-
+const context ={result: 'True'}
 
 //route GET api/users
-router.post('/',TokenValidation,(req,res)=>{
+router.post('/',TokenValidation, (req,res)=>{
     const {structured_scope} = req.token
     const resource_set_id =structured_scope.resource_set_id
     const resourceType =structured_scope.resourceType
@@ -18,9 +20,12 @@ router.post('/',TokenValidation,(req,res)=>{
     const actions = structured_scope.actions;
     let flag =0
 
+    //console.log(ContextUserAtHospital)
     Patient.find({resource_set_id})
         .then(data=>{
             console.log(data)
+
+            let ContextUserAtHospital
 
             if(!data){
                 return res.status(400).json({msg: 'resource not found'});
@@ -43,7 +48,25 @@ router.post('/',TokenValidation,(req,res)=>{
                         ){
                         //console.log("findone")
                         flag++
-                        return res.status(400).json(eachData.content);
+
+                        axios.post('http://localhost:4995/api/userathospital')
+                            .then(res=> {
+                                //console.log(res.data)
+                                if ((_.isEqual(res.data, context))) {
+                                    ContextUserAtHospital = true
+                                }
+                                return ContextUserAtHospital;
+                            }).then(ContextUserAtHospital=>{
+                                if (ContextUserAtHospital){
+                                    console.log("Context Valid")
+                                    return res.status(400).json(eachData.content);
+                                }else{
+                                    return res.status(400).json({msg: 'Context Info not valid'});
+                                }
+                        }).catch(err=>{res.status(400).json({msg:err.name})})
+
+                        //console.log(ContextUserAtHospital)
+
                     }
                 })}
             console.log(flag)
