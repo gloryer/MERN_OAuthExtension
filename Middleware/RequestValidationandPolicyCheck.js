@@ -2,7 +2,7 @@ const config=require('config');
 const jwt=require('jsonwebtoken');
 const _ = require("lodash");
 
-const Policy =require('../models/Policy');
+const Policy =require('../models/HealthPolicy');
 const JWT_BEARER_CLIENT_ASSERTION_TYPE= "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
 

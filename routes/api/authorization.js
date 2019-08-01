@@ -1,7 +1,7 @@
 const express =require('express');
 const router =express.Router();
 const RequestEvaluation = require('../../Middleware/RequestValidationandPolicyCheck');
-const Policy =require('../../models/Policy');
+const Policy =require('../../models/HealthPolicy');
 const jwt =require('jsonwebtoken');
 
 

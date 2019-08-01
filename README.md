@@ -25,10 +25,11 @@ The implementation uses a number of open source projects/libraries to work prope
 
 ## Authorization Server 
 The authorization server is implemented as a node.js server, listened on port 5000 in the local computer. The implementation of AS includes four sub modules, policy engine, secure virtual resource, token generator and policy manager. 
-  - **Policy engine**:  Grant or deny the request based on policies. 
-  - **Secure virtual resourse**: Securely storing the polices and client's credentials.
-  - **Token generator**: Generating the token once the request is permitted by policy engine.
-  - **Policy manager**: Interface for Resource Owner to manage the policies at any time.
+
+  - `Policy engine`:  Grant or deny the request based on policies. 
+  - `Secure virtual resourse`: Securely storing the polices and client's credentials.
+  - `Token generator`: Generating the token once the request is permitted by policy engine.
+  - `Policy manager`: Interface for Resource Owner to manage the policies at any time.
   
 Two APIs are implemented on the AS,api/authorization and api/policy. 
 
