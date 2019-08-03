@@ -1,46 +1,49 @@
 const express =require('express');
 const router =express.Router();
-const policyValidation = require('../../Middleware/PolicyValidation');
-
+const paymentSubjectValidation = require('../../Middleware/PaymentSubjectValidation');
+const _ = require("lodash");
 
 //Item Model
 
-const PaymentPolicy =require('../../models/HealthPolicy');
+const PaymentSubjectAttribute =require('../../models/PaymentSubjectAttributes');
 
 router.get('/',(req,res)=>{
-    PaymentPolicy.find()
+    PaymentSubjectAttribute.find()
         .then(list => res.json(list))
 });
 
 
 //route GET api/users
-router.post('/',policyValidation,(req,res)=>{
-    const{type,name, rules}=req.body;
+router.post('/', paymentSubjectValidation,(req,res)=>{
+    const {subject_id}=req.body;
 
-    PaymentPolicy.findOne({name})
-        .then(policy=>{
-            if(policy) return res.status(400).json({msg:'Policy already exist'});
+    PaymentSubjectAttribute.findOne({subject_id})
+        .then(subject=>{
+            // console.log(subject.subject_id)
+            //console.log(subject_id)
+            if(subject) {
+                    return res.status(400).json({msg: 'Attributes already exist'});
+                }
 
-            const newPolicy = new PaymentPolicy({
-                type: type,
-                name:name,
-                rules: rules,
-            });
-            newPolicy.save()
-                .then(policy=> {
-                    res.json({
-                        type: policy.type,
-                        name: policy.name,
-                        rules: policy.rules,
+
+            if(!subject) {
+                const newSubject = new PaymentSubjectAttribute({
+                    subject_id: subject_id,
+                });
+                newSubject.save()
+                    .then(subject => {
+                        res.json({
+                            subject_id: subject.subject_id,
+                        })
                     })
-                })
+            }
 
         });
 });
 
 router.delete('/:id',(req,res)=>{
-    PaymentPolicy.findById(req.params.id)
-        .then(policy=>policy.remove()
+    PaymentSubjectAttribute.findById(req.params.id)
+        .then(subject=>subject.remove()
             .then(()=>res.json({success:true})))
         .catch(err=>res.status(404).json({msg:err.name}));
 });

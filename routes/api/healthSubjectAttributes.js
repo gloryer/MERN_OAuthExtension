@@ -1,6 +1,6 @@
 const express =require('express');
 const router =express.Router();
-const subjectValidation = require('../../Middleware/HealthSubjectValidation');
+const HealthSubjectValidation = require('../../Middleware/HealthSubjectValidation');
 const _ = require("lodash");
 
 //Item Model
@@ -14,43 +14,50 @@ router.get('/',(req,res)=>{
 
 
 //route GET api/users
-router.post('/', subjectValidation,(req,res)=>{
-    const{subject_id,name, role, department}=req.body;
+router.post('/', HealthSubjectValidation,(req,res)=>{
+    const {subject_id,name, role, department}=req.body;
 
-    HealthSubjectAttribute.findOne({name})
+    HealthSubjectAttribute.findOne({subject_id})
         .then(subject=>{
-            if(_.isEqual(subject.subject_id,subject_id) &&
-                _.isEqual(subject.role,role)&&
-                _.isEqual(subject.department, department)){
-                    return res.status(400).json({msg:'Attributes already exist'});
-            }
-
-            if(_.isEqual(subject.subject_id,subject_id)){
-                if(!(_.isEqual(subject.role,role))) {
-                    subject.role.push(role)
-                    subject.save();
+           // console.log(subject.subject_id)
+            //console.log(subject_id)
+            if(subject) {
+                if (_.isEqual(subject.name, name) &&
+                    _.isEqual(subject.role, role) &&
+                    _.isEqual(subject.department, department)) {
+                    return res.status(400).json({msg: 'Attributes already exist'});
                 }
-                else if(!(_.isEqual(subject.department,department))){
-                    subject.save();
+
+                if (!(_.isEqual(subject.name, name))||
+                    !(_.isEqual(subject.role, role))||
+                    !(_.isEqual(subject.department, department))){
+
+                    subject.name = name
+                    subject.role = role
+                    subject.department = department
                 }
-            }
 
+                subject.save().then(subject=>res.json({subject}))
 
-            const newSubject = new HealthSubjectAttribute({
-                subject_id: subject_id,
-                name:name,
-                role: role,
-                department:department
-            });
-            newSubject.save()
-                .then(subject=> {
-                    res.json({
-                        subject_id: subject.subject_id,
-                        name: subject.name,
-                        role:subject.role,
-                        department:subject.department
+                }
+
+            if(!subject) {
+                const newSubject = new HealthSubjectAttribute({
+                    subject_id: subject_id,
+                    name: name,
+                    role: role,
+                    department: department
+                });
+                newSubject.save()
+                    .then(subject => {
+                        res.json({
+                            subject_id: subject.subject_id,
+                            name: subject.name,
+                            role: subject.role,
+                            department: subject.department
+                        })
                     })
-                })
+            }
 
         });
 });

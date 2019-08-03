@@ -12,7 +12,7 @@ const HealthPolicySchema =new Schema({
         ObjectAttribute:{},
         authorization:String,
         Obligation:{
-            actions: String,
+            actions: [],
         },
         context: [],
         Default:{

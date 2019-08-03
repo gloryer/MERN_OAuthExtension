@@ -1,6 +1,6 @@
 
 function policyValidation(req, res, next) {
-    const {type, name, content, Default} = req.body;
+    const {type, name, rules} = req.body;
 
    // console.log(JSON.stringify(req.body));
     // next();
@@ -8,26 +8,21 @@ function policyValidation(req, res, next) {
 
 if(!type){
     return res.status(400).json({msg:"Must have 'type'"});
-} else if (!content
-    ||!content.rules
-    ||!(content.rules instanceof Object )
-    ||(Object.keys(content.rules).length===0)){
+} else if (!rules
+    ||!(rules instanceof Object )
+    ||(Object.keys(rules).length===0)){
     //console.log(rules,rules instanceof object,Object.keys(rules).length)
-    return res.status(400).json({msg:"Must have 'content' with non-empty 'rules' object."});
+    return res.status(400).json({msg:"Must have non-empty 'rules' object."});
 }else if(!name){
     return res.status(400).json({msg:"Must have 'name'"});
-}else if(!Default
-    ||!(Default instanceof Object )
-    ||(Object.keys(Default).length===0)){
-    return res.status(400).json({msg:"Must have a non-empty 'Default'  object."});
 }else {
     try {
         typeValidation(type);
-        ruleValidation(content.rules);
-        DefaultValidation(Default)
+        ruleValidation(rules);
+        //DefaultValidation(Default)
 
     } catch (err) {
-        return res.status(400).json({msg: "Error in 'rule':" + err.message});
+        return res.status(400).json({msg: "Error in 'rule': " + err.message});
     }
 }
     next();
@@ -35,7 +30,7 @@ if(!type){
 }
 
 function typeValidation(type) {
-    const typeList = ["simple-policy"];
+    const typeList = ["ABAC policy"];
 
     if (!(typeList.includes(type))) {
         throw {
@@ -47,40 +42,49 @@ function typeValidation(type) {
 
 
 function ruleValidation(rules){
-    const {matchAnyOf, decision, context} = rules;
+    const {SubjectAttribute,ObjectAttribute, authorization, Obligation,context,Default} = rules;
+    console.log(context)
 
     const contextList=["clientlocationhospital", "clientlocationclinic"];
-if (!matchAnyOf) {
+    //console.log(contextList.includes(context))
+    const authorizationList=["permit","deny"];
+if (!SubjectAttribute) {
     throw {
         error: "invalid_policy",
-        message: "Must have 'matchAnyOf'."
+        message: "Must have 'SubjectAttributes'."
     };
-} else if (!decision) {
+} else if (!ObjectAttribute) {
     throw {
         error: "invalid_policy",
-        message: "Must have 'decision'."
+        message: "Must have 'SubjectAttributes'."
     };
 
+} else if (!Obligation||Obligation.actions==="") {
+    throw {
+        error: "invalid_policy",
+        message: "Must have an Obligation object with non-empty action field."
+    };
 } else if (context|| context === "") {
-    if (!(contextList.includes(context))){
+    if (!(context.every(currentvalue=> contextList.includes(currentvalue)))){
         throw {
-error: "invalid_policy",
-    message: "Context and ESO not registered at AS"
+        error: "invalid_policy",
+        message: "Context is not supported in AS."
 };
-}
-}}
-
-
-function DefaultValidation(Default) {
-    const {authorization} = Default;
-
-    if (!authorization) {
+} else if (authorization||authorization){
+        if (!(authorizationList.includes(authorization))){
+            throw {
+                error: "invalid_policy",
+                message: ` Current support authorization type is ${authorizationList}`
+            };
+        }
+    }else if (!Default||Default.authorization===""){
         throw {
             error: "invalid_policy",
             message: "Must have 'authorization' in 'Default'"
         };
     }
-}
+
+}}
 
 
 //res.status(400).json({msg: 'Token is not valid'});

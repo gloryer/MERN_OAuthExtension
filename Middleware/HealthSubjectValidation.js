@@ -1,6 +1,5 @@
 
 
-
 function HealthSubjectValidation(req, res, next) {
     const {subject_id, name, role, department} = req.body;
 

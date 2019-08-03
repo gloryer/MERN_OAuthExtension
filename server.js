@@ -9,7 +9,7 @@ const cors = require('cors');
 
 app.use(cors()) ;// Use this after the variable declaration
 
-//Bodyparser Middleware
+//Body parser Middleware
 app.use(express.json());
 
 //DB config
@@ -31,7 +31,8 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/tokens', require('./routes/api/tokens'));
 app.use('/api/healthpolicy', require('./routes/api/healthpolicy'));
 app.use('/api/paymentpolicy', require('./routes/api/paymentpolicy'));
-app.use('api/healthSubjectAttributes', require('./routes/api/healthSubjectAttributes'))
+app.use('/api/healthSubjectAttributes', require('./routes/api/healthSubjectAttributes'))
+app.use('/api/paymentSubjectAttributes', require('./routes/api/paymentSubjectAttributes'))
 
 if(process.env.NODE_ENV==='production'){
     app.use(express.static('client/build'));
