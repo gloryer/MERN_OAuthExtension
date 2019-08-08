@@ -131,8 +131,6 @@ Client App A can one time charge $5 ON Alice's checking account for the purpose 
 
 ```json
 {
-	"rules":{
-         ...
 		"ActionAttributes":{
 			"actions":["withdraw","transfer"],
 			"withdraw":{
@@ -146,8 +144,6 @@ Client App A can one time charge $5 ON Alice's checking account for the purpose 
 				 "toaccount":"56829181"
 			}
 		}
-		...
-	}
 }
 ```
 
