@@ -145,7 +145,7 @@ Client App A can one time charge $5 ON Alice's checking account for the purpose 
 				 "currency":"CAD",
 				 "toaccount":"56829181"
 			}
-		},
+		}
 		...
 	}
 }
