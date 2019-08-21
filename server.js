@@ -29,10 +29,8 @@ mongoose.connect(db,{
 app.use('/api/items', require('./routes/api/items'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/tokens', require('./routes/api/tokens'));
-app.use('/api/healthpolicy', require('./routes/api/healthpolicy'));
-app.use('/api/paymentpolicy', require('./routes/api/paymentpolicy'));
-app.use('/api/healthSubjectAttributes', require('./routes/api/healthSubjectAttributes'))
-app.use('/api/paymentSubjectAttributes', require('./routes/api/paymentSubjectAttributes'))
+app.use('/api/policy', require('./routes/api/policy'));
+app.use('/api/SubjectAttributes', require('./routes/api/SubjectAttributes'))
 
 if(process.env.NODE_ENV==='production'){
     app.use(express.static('client/build'));

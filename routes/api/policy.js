@@ -5,10 +5,10 @@ const _ = require("lodash");
 
 //Item Model
 
-const PaymentPolicy =require('../../models/HealthPolicy');
+const Policy =require('../../models/Policy');
 
 router.get('/',(req,res)=>{
-    PaymentPolicy.find()
+    Policy.find()
         .then(list => res.json(list))
 });
 
@@ -17,7 +17,7 @@ router.get('/',(req,res)=>{
 router.post('/',PolicyValidation,(req,res)=>{
     const {type, name,rules}=req.body;
 
-    PaymentPolicy.findOne({name})
+    Policy.findOne({name})
         .then(subject=>{
             // console.log(subject.subject_id)
             //console.log(subject_id)
@@ -25,24 +25,24 @@ router.post('/',PolicyValidation,(req,res)=>{
                 if (_.isEqual(subject.rules, rules)) {
                     return res.status(400).json({msg: 'policy already exist'});
                 }else if (
-                    !(_.isEqual(subject.rules.SubjectAttribute,rules.SubjectAttribute))||
-                    !(_.isEqual(subject.rules.ObjectAttribute,rules.ObjectAttribute))||
+                    !(_.isEqual(subject.rules.SubjectAttributes,rules.SubjectAttributes))||
+                    !(_.isEqual(subject.rules.ObjectAttributes,rules.ObjectAttributes))||
                     !(_.isEqual(subject.rules.authorization, rules.authorization))||
-                    !(_.isEqual(subject.rules.Obligation, rules.Obligation))||
+                    !(_.isEqual(subject.rules.ActionAttributes, rules.ActionAttributes))||
                     !(_.isEqual(subject.rules.context,rules.context))){
 
-                    subject.rules.SubjectAttribute =rules.SubjectAttribute
-                    subject.rules.ObjectAttribute=rules.ObjectAttribute
-                    subject.rules.authorization=rules.authorization
-                    subject.rules.Obligation=rules.Obligation
-                    subject.rules.context=rules.context
+                        subject.rules.SubjectAttributes =rules.SubjectAttributes
+                        subject.rules.ObjectAttributes=rules.ObjectAttributes
+                        subject.rules.authorization=rules.authorization
+                        subject.rules.ActionAttributes=rules.ActionAttributes
+                        subject.rules.context=rules.context
 
                 }
                 subject.save().then(res.json(subject))
             }
 
             if(!subject) {
-                const newSubject = new PaymentPolicy({
+                const newSubject = new Policy({
                     type:type,
                     name:name,
                     rules: rules
@@ -61,7 +61,7 @@ router.post('/',PolicyValidation,(req,res)=>{
 });
 
 router.delete('/:id',(req,res)=>{
-    PaymentPolicy.findById(req.params.id)
+    Policy.findById(req.params.id)
         .then(subject=>subject.remove()
             .then(()=>res.json({success:true})))
         .catch(err=>res.status(404).json({msg:err.name}));

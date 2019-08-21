@@ -1,6 +1,6 @@
 
 function policyValidation(req, res, next) {
-    const {type, name, rules} = req.body;
+    const {type, name,application, rules} = req.body;
 
    // console.log(JSON.stringify(req.body));
     // next();
@@ -18,6 +18,7 @@ if(!type){
 }else {
     try {
         typeValidation(type);
+        profileValidation(application);
         ruleValidation(rules);
         //DefaultValidation(Default)
 
@@ -40,29 +41,40 @@ function typeValidation(type) {
     }
 }
 
+function profileValidation(application) {
+    const applicationList = ["Payment","Health"];
+
+    if (!(applicationList.includes(application))) {
+        throw {
+            error: "invalid_policy",
+            message: `The application is not supported. Current support type is ${applicationList}`
+        }
+    }
+}
+
 
 function ruleValidation(rules){
-    const {SubjectAttribute,ObjectAttribute, authorization, Obligation,context,Default} = rules;
-    console.log(context)
+    const {SubjectAttributes,ObjectAttributes, authorization, ActionAttributes,context,Default} = rules;
+   // console.log(context)
 
     const contextList=["clientlocationhospital", "clientlocationclinic"];
     //console.log(contextList.includes(context))
-    const authorizationList=["permit","deny"];
-if (!SubjectAttribute) {
+    const authorizationList=["Permit","Deny"];
+if (!SubjectAttributes) {
     throw {
         error: "invalid_policy",
         message: "Must have 'SubjectAttributes'."
     };
-} else if (!ObjectAttribute) {
+} else if (!ObjectAttributes) {
     throw {
         error: "invalid_policy",
         message: "Must have 'SubjectAttributes'."
     };
 
-} else if (!Obligation||Obligation.actions==="") {
+} else if (!ActionAttributes||ActionAttributes.actions==="") {
     throw {
         error: "invalid_policy",
-        message: "Must have an Obligation object with non-empty action field."
+        message: "Must have an ActionAttributes object with non-empty action field."
     };
 } else if (context|| context === "") {
     if (!(context.every(currentvalue=> contextList.includes(currentvalue)))){
@@ -70,18 +82,21 @@ if (!SubjectAttribute) {
         error: "invalid_policy",
         message: "Context is not supported in AS."
 };
-} else if (authorization||authorization){
-        if (!(authorizationList.includes(authorization))){
-            throw {
-                error: "invalid_policy",
-                message: ` Current support authorization type is ${authorizationList}`
-            };
-        }
-    }else if (!Default||Default.authorization===""){
+} else if (!authorization) {
         throw {
             error: "invalid_policy",
-            message: "Must have 'authorization' in 'Default'"
+            message: ` Must indicate authorization decision`
+        }
+} else if (!(authorizationList.includes(authorization))){
+        throw {
+            error: "invalid_policy",
+            message: ` Current support authorization type is ${authorizationList}`
         };
+}else if (!Default||Default.authorization===""){
+    throw {
+        error: "invalid_policy",
+        message: "Must have 'authorization' in 'Default'"
+    };
     }
 
 }}

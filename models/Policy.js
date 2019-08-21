@@ -1,17 +1,18 @@
 const mongoose =require('mongoose');
 const Schema =mongoose.Schema;
 
-const HealthPolicySchema =new Schema({
+const PolicySchema =new Schema({
     type:String,
     name:{
         type: String,
         unique: true
     },
+    application: String,
     rules:{
-        SubjectAttribute:{},
-        ObjectAttribute:{},
+        SubjectAttributes:{},
+        ObjectAttributes:{},
         authorization:String,
-        Obligation:{
+        ActionAttributes:{
             actions: [],
         },
         context: [],
@@ -21,4 +22,4 @@ const HealthPolicySchema =new Schema({
     }
 });
 
-module.exports=HealthPolicy=mongoose.model('HealthPolicy', HealthPolicySchema);
+module.exports=Policy=mongoose.model('Policy', PolicySchema);
