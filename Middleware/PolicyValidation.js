@@ -15,10 +15,12 @@ if(!type){
     return res.status(400).json({msg:"Must have non-empty 'rules' object."});
 }else if(!name){
     return res.status(400).json({msg:"Must have 'name'"});
+}else if (!application){
+    return res.status(400).json({msg:"Must have 'application'"});
 }else {
     try {
         typeValidation(type);
-        profileValidation(application);
+        //profileValidation(application);
         ruleValidation(rules);
         //DefaultValidation(Default)
 
@@ -40,6 +42,7 @@ function typeValidation(type) {
         }
     }
 }
+/*
 
 function profileValidation(application) {
     const applicationList = ["Payment","Health"];
@@ -51,33 +54,34 @@ function profileValidation(application) {
         }
     }
 }
+*/
 
 
 function ruleValidation(rules){
-    const {SubjectAttributes,ObjectAttributes, authorization, ActionAttributes,context,Default} = rules;
+    const {subjectAttributes,objectAttributes, authorization, actionAttributes,environmentContext,Default} = rules;
    // console.log(context)
 
     const contextList=["clientlocationhospital", "clientlocationclinic"];
     //console.log(contextList.includes(context))
     const authorizationList=["Permit","Deny"];
-if (!SubjectAttributes) {
+if (!subjectAttributes) {
     throw {
         error: "invalid_policy",
         message: "Must have 'SubjectAttributes'."
     };
-} else if (!ObjectAttributes) {
+} else if (!objectAttributes) {
     throw {
         error: "invalid_policy",
         message: "Must have 'SubjectAttributes'."
     };
 
-} else if (!ActionAttributes||ActionAttributes.actions==="") {
+} else if (!actionAttributes) {
     throw {
         error: "invalid_policy",
         message: "Must have an ActionAttributes object with non-empty action field."
     };
-} else if (context|| context === "") {
-    if (!(context.every(currentvalue=> contextList.includes(currentvalue)))){
+} else if (environmentContext|| environmentContext === "") {
+    if (!(environmentContext.every(currentvalue=> contextList.includes(currentvalue)))){
         throw {
         error: "invalid_policy",
         message: "Context is not supported in AS."
@@ -92,7 +96,7 @@ if (!SubjectAttributes) {
             error: "invalid_policy",
             message: ` Current support authorization type is ${authorizationList}`
         };
-}else if (!Default||Default.authorization===""){
+}else if (!Default){
     throw {
         error: "invalid_policy",
         message: "Must have 'authorization' in 'Default'"

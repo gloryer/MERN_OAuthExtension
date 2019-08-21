@@ -2,6 +2,7 @@ const express =require('express');
 const router =express.Router();
 const PolicyValidation = require('../../Middleware/PolicyValidation');
 const _ = require("lodash");
+//const equal = require('deep-equal');
 
 //Item Model
 
@@ -15,47 +16,46 @@ router.get('/',(req,res)=>{
 
 //route GET api/users
 router.post('/',PolicyValidation,(req,res)=>{
-    const {type, name,rules}=req.body;
+    const {type, name,application,rules}=req.body;
 
     Policy.findOne({name})
         .then(subject=>{
-            // console.log(subject.subject_id)
-            //console.log(subject_id)
             if(subject) {
-                if (_.isEqual(subject.rules, rules)) {
-                    return res.status(400).json({msg: 'policy already exist'});
-                }else if (
-                    !(_.isEqual(subject.rules.SubjectAttributes,rules.SubjectAttributes))||
-                    !(_.isEqual(subject.rules.ObjectAttributes,rules.ObjectAttributes))||
-                    !(_.isEqual(subject.rules.authorization, rules.authorization))||
-                    !(_.isEqual(subject.rules.ActionAttributes, rules.ActionAttributes))||
-                    !(_.isEqual(subject.rules.context,rules.context))){
+                if(_.isEqual(subject.rules.actionAttributes, rules.actionAttributes)&&
+                _.isEqual(subject.rules.subjectAttributes,rules.subjectAttributes)&&
+                _.isEqual(subject.rules.objectAttributes,rules.objectAttributes)&&
+                _.isEqual(subject.rules.authorization, rules.authorization)&&
+                _.isEqual(subject.rules.environmentContext,rules.environmentContext)&&
+                _.isEqual(subject.rules.Default,rules.Default)){
 
-                        subject.rules.SubjectAttributes =rules.SubjectAttributes
-                        subject.rules.ObjectAttributes=rules.ObjectAttributes
-                        subject.rules.authorization=rules.authorization
-                        subject.rules.ActionAttributes=rules.ActionAttributes
-                        subject.rules.context=rules.context
+                    return res.status(400).json({msg: 'policy already exist'});
+
+                } else {
+
+                    subject.rules = rules
+                    subject.save().then(res.json(subject))
+
 
                 }
-                subject.save().then(res.json(subject))
             }
 
-            if(!subject) {
-                const newSubject = new Policy({
-                    type:type,
-                    name:name,
-                    rules: rules
-                });
-                newSubject.save()
-                    .then(subject => {
-                        res.json({
-                            type:subject.type,
-                            name: subject.name,
-                            rules:subject.rules
+                if (!subject) {
+                    const newSubject = new Policy({
+                        type: type,
+                        name: name,
+                        application: application,
+                        rules: rules
+                    });
+                    newSubject.save()
+                        .then(subject => {
+                            res.json({
+                                type: subject.type,
+                                name: subject.name,
+                                application: application,
+                                rules: subject.rules
+                            })
                         })
-                    })
-            }
+                }
 
         });
 });

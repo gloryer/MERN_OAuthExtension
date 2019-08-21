@@ -9,15 +9,13 @@ const PolicySchema =new Schema({
     },
     application: String,
     rules:{
-        SubjectAttributes:{},
-        ObjectAttributes:{},
+        subjectAttributes:{},
+        objectAttributes:{},
         authorization:String,
-        ActionAttributes:{
-            actions: [],
+        actionAttributes:{
         },
-        context: [],
+        environmentContext: [],
         Default:{
-            authorization: String,
         }
     }
 });
