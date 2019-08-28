@@ -2,9 +2,17 @@ const config=require('config');
 const jwt=require('jsonwebtoken');
 const _ = require("lodash");
 
-const Policy =require('../models/HealthPolicy');
+const Policy =require('../models/Policy');
+const SubjectAttributes = require('../models/SubjectAttributes');
 const JWT_BEARER_CLIENT_ASSERTION_TYPE= "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
+var clientToPublicKey={
+    "1000": "client1000publickey",
+    "1001":"client1001publickey",
+    "1002":"client1002publickey",
+    "client_A":"client_Apublickey",
+    "client_B":"client_Bpublickey"
+}
 
 function RequestEvaluation (req, res, next) {
     let grantType=req.header('grant-type');
@@ -20,11 +28,16 @@ function RequestEvaluation (req, res, next) {
     }
 
     if(claimToken){
+        var decoded = jwt.decode(claimToken);
+        //console.log(decoded)
+        var clientId = decoded.client_id;
+        var clientPublickey = clientToPublicKey[clientId];
+        //console.log(clientPublickey)
         try{
-            var claim=jwt.verify(claimToken,config.get('jwtSecretClient'));
+            var claim=jwt.verify(claimToken,config.get(clientPublickey),{algorithms: ['RS256']});
             req.decoded=claim;
         }catch(err){
-            return res.status(403).json({msg:`The claim token can not be verified because of ${ err.name}`})}
+            return res.status(403).json({msg:`The claim token can not be verified because of ${ err}`})}
     }
 
     try{
@@ -44,19 +57,26 @@ function RequestEvaluation (req, res, next) {
     // Access evaluation and token generation if access is allowed by policy
     let permitPolicy
     var decisionPool=[];
+    const {application}=req.decoded
+    //console.log(claim)
 
-    Policy.find()
+    Policy.find({application})
         .then(policy=>{
+            //console.log(policy)
             policy.forEach(eachPolicy =>{
-                    decisionPool.push(matchRules(claim,eachPolicy))
+                    //console.log(eachPolicy)
                     if (matchRules(claim,eachPolicy)==="Permit"){
+                        decisionPool.push("Permit")
                         permitPolicy=eachPolicy;}
+                    else{
+                        decisionPool.push("Deny")
+                    }
 
                     //console.log(decisionPool)
                 }
             )
             console.log(decisionPool)
-            //console.log(permitPolicy)
+            console.log(permitPolicy)
             if(!(decisionPool.includes("Permit"))) {
                 return res.status(401).json({msg:"Access denied or access not applicable"});
             }
@@ -68,10 +88,12 @@ function RequestEvaluation (req, res, next) {
                     subject: claim.client_id,
                     audience: "http://localhost:4990/patientrecord",
                     issuer: "http://localhost:5000/authorization",
-                    structured_scope: permitPolicy.content.rules.decision.structuredScope,
-                    context: permitPolicy.content.rules.context,
+                    objectAttributes: permitPolicy.objectAttributes,
+                    subjectAttributes: permitPolicy.subjectAttributes,
+                    environmentContext: permitPolicy.environmentContext,
                 },
-                config.get('jwtSecretRS'),
+                config.get('ASprivatekey'),
+                {algorithm: 'RS256'},
                 (err,token)=>{
                     if (err) throw {
                         error:"token_generation_failed",
@@ -147,7 +169,7 @@ function FieldValidation(grantType,clientAssertionType){
 
 })}*/
 
-
+/*
 
 function matchRules(claim,policy){
     //let evaluationResults=[];
@@ -164,9 +186,9 @@ function matchRules(claim,policy){
 
 
 
-   /*  Object.keys(claim).forEach(element=>{
+   /!*  Object.keys(claim).forEach(element=>{
         console.log(element)
-    })*/
+    })*!/
     //console.log(matchedRule)
     //console.log(claimScope.resource_set_id)
     //console.log(scope.resource_set_id)
@@ -196,33 +218,143 @@ function matchRules(claim,policy){
     }
 
 
+}*/
+
+function matchRules(claim,policy){
+    //let evaluationResults=[];
+    //console.log(policy)
+    var matchedRule =true
+
+    //console.log(subjectEvaluation(claim,policy.rules))
+    //console.log(actionEvaluation(claim,policy.rules))
+    const {client_id} = claim;
+    const subject_id=client_id
+    const rules=policy.rules
+
+    try {
+        SubjectAttributes.find({subject_id})
+            .then(attributes => {
+                //console.log(attributes)
+                // console.log(Object.keys(rules.subjectAttributes))
+                //console.log(Object.keys(attributes[0].customizedAttributes))
+                //console.log(Object.keys(rules.subjectAttributes).every(element => {
+                //Object.keys(attributes[0].customizedAttributes).includes(element)
+                //}))
+                if (Object.keys(rules.subjectAttributes).every(element =>
+                    Object.keys(attributes[0].customizedAttributes).includes(element)
+                )) {
+                    //console.log("yeah")
+
+                    Object.keys(rules.subjectAttributes).forEach(field =>
+                        matchedRule = matchedRule &&
+                            attributes[0].customizedAttributes[field].some(val =>
+                                rules.subjectAttributes[field].includes(val))
+                    )
+                    //console.log(singleEvaluation)
+                    return matchedRule
+
+                }
+            }).then(matchedRule => {
+
+            if (claim.structured_scope.actions.every(element =>
+                rules.actionAttributes.actions.includes(element)
+            )) {
+                //console.log("yeah")
+
+                claim.structured_scope.actions.forEach(action => {
+                    matchedRule = matchedRule && (_.isEqual(claim.structured_scope[action], rules.actionAttributes[action]))
+                })
+                //console.log(singleEvaluation)
+                return matchedRule
+            }
+        })
+    }catch (err) {
+        throw{
+            error: "Policy Evaluation failed",
+            message: `${err.name}`
+        }
+
+    }
+
+
+    console.log(matchedRule)
+    if (matchedRule===true) {
+        return rules.authorization
+    }else{
+        return rules.Default.authorization
+    }
+
 }
 
+function subjectEvaluation (claim, rules) {
+    //console.log("yeah")
+    const {client_id} = claim;
+    const subject_id=client_id
+    var singleEvaluation = true;
+    try {
+        SubjectAttributes.find({subject_id})
+            .then(attributes => {
+                //console.log(attributes)
+               // console.log(Object.keys(rules.subjectAttributes))
+                //console.log(Object.keys(attributes[0].customizedAttributes))
+                //console.log(Object.keys(rules.subjectAttributes).every(element => {
+                    //Object.keys(attributes[0].customizedAttributes).includes(element)
+                //}))
+                if (Object.keys(rules.subjectAttributes).every(element =>
+                    Object.keys(attributes[0].customizedAttributes).includes(element)
+                )) {
+                    //console.log("yeah")
 
-/*
-function tokenGeneration(permitPolicy){
-
-        jwt.sign(
-            {
-                expireIn: "1 day",
-                subject: claim.client_id,
-                audience: "http://localhost:5000/patientsResource",
-                issuer: "http://localhost:5000/authorization",
-                structured_scope: permitPolicy.content.rules.decision.structuredScope,
-                context: permitPolicy.content.rules.context,
-            },
-            config.get('jwtSecret'),
-            (err,token)=>{
-                if (err) throw err;
-                //console.log(token);
-                var access_token=token
-            }
-        )
+                    Object.keys(rules.subjectAttributes).forEach(field =>
+                        singleEvaluation = singleEvaluation &&
+                        attributes[0].customizedAttributes[field].some(val =>
+                            rules.subjectAttributes[field].includes(val))
+                    )
+                    //console.log(singleEvaluation)
+                    return singleEvaluation
+                }else{
+                    return false
+                }
 
 
+            })
+    } catch (err) {
+        throw{
+            error: "SubjectAttributes evaluation failed",
+            message: `${err.name}`
+        }
+    }
+}
 
-    }*/
+function actionEvaluation (claim, rules) {
 
+    var singleEvaluation = true;
+    //console.log("hey")
+
+    try {
+        //console.log("hey")
+        //console.log(claim.structured_scope.actions)
+        //console.log(rules.actionAttributes.actions)
+        if (claim.structured_scope.actions.every(element =>
+            rules.actionAttributes.actions.includes(element)
+        )) {
+            //console.log("yeah")
+
+            claim.structured_scope.actions.forEach(action => {
+                singleEvaluation = singleEvaluation && (_.isEqual(claim.structured_scope[action], rules.actionAttributes[action]))
+            })
+            //console.log(singleEvaluation)
+            return singleEvaluation
+        } else {
+            return false
+        }
+    } catch (err) {
+        throw{
+            error: "action evaluation failed",
+            message: `${err.name}`
+        }
+    }
+}
 
 //res.status(400).json({msg: 'Token is not valid'});
 

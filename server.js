@@ -30,7 +30,8 @@ app.use('/api/items', require('./routes/api/items'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/tokens', require('./routes/api/tokens'));
 app.use('/api/policy', require('./routes/api/policy'));
-app.use('/api/SubjectAttributes', require('./routes/api/SubjectAttributes'))
+app.use('/api/SubjectAttributes', require('./routes/api/subjectAttributes'))
+app.use('/api/authorization', require('./routes/api/authorization'))
 
 if(process.env.NODE_ENV==='production'){
     app.use(express.static('client/build'));
