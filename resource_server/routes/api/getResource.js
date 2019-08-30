@@ -13,27 +13,30 @@ const context ={result: 'True'}
 
 //route GET api/users
 router.get('/',TokenValidation, (req,res)=>{
-    console.log(req.token)
-    const {objectAttributes,actionAttributes,environmenContext} = req.token
+    console.log("enter")
+    const {objectAttributes,actionAttributes,environmenContext} = req.token1
     const resourceType =objectAttributes.resourceType
     /*const resource_set_id =structured_scope.resource_set_id
     //const resourceType =structured_scope.resourceType
     const securityLabel = structured_scope.securityLabel
     const actions = structured_scope.actions;*/
     //let flag =0
-    console.log(resourceType)
+    //console.log(resourceType)
 
     //console.log(ContextUserAtHospital)post
     Resource.find({resourceType})
         .then(data=>{
-            console.log(data)
+            //console.log(data)
 
             let ContextUserAtHospital
 
             if (data) {
-                //dataArray=[data]
+                var content =[]
+                data.forEach(element=>{
+                    content.push(element.content)
+                })
                 if (actionAttributes.actions.includes("view")) {
-                    if(environmenContext) {
+                    if (environmenContext) {
 
                         axios.post('http://localhost:4995/api/userathospital')
                             .then(res => {
@@ -45,17 +48,16 @@ router.get('/',TokenValidation, (req,res)=>{
                             }).then(ContextUserAtHospital => {
                             if (ContextUserAtHospital) {
                                 console.log("Context Valid")
-                                return res.status(400).json(data.content);
+                                return res.status(400).json(content)
                             } else {
                                 return res.status(400).json({msg: 'Context Info not valid'});
                             }
                         }).catch(err => {
                             res.status(400).json({msg: err.name})
                         })
-                    }else{
-                        return res.status(400).json(data.content);
+                    } else {
+                            return res.status(400).json(content)
                     }
-
                 } else {
                     return res.status(400).json({msg: 'action not allowed'});
                 }

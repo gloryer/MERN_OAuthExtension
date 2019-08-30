@@ -19,22 +19,20 @@ router.post('/',resourceValidation,(req,res)=>{
     const{resource_set_id, resourceType, resourceDescription, content}=req.body;
 
     Patient.findOne({resource_set_id})
-        .then(data=>{
+        .then(data=> {
             //console.log(data)
-            if (data){
-                if (_.isEqual(data.resourceType,resourceType )&&
-                _.isEqual(data.resourceDescription,resourceDescription)&&
-                _.isEqual(data.content,content)){
-                    return res.status(400).json({msg:'Data already exist'});
-                }
-
-                //console.log(decisionPool)
-            }else{
+            if (data) {
+                if (_.isEqual(data.resourceType, resourceType) &&
+                    _.isEqual(data.resourceDescription, resourceDescription) &&
+                    _.isEqual(data.content, content)) {
+                    return res.status(400).json({msg: 'Data already exist'});
+                } else {
                 data.resourceType = resourceType
-                data.resourceDescription=resourceDescription
-                data.content=content
+                data.resourceDescription = resourceDescription
+                data.content = content
                 data.save().then(res.json(data))
             }
+        }
 
 
             const newData = new Patient({

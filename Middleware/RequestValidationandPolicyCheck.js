@@ -1,6 +1,7 @@
 const config=require('config');
 const jwt=require('jsonwebtoken');
 const _ = require("lodash");
+const SHA256 = require("crypto-js/sha256");
 
 const Policy =require('../models/Policy');
 const SubjectAttributes = require('../models/SubjectAttributes');
@@ -75,17 +76,17 @@ function RequestEvaluation (req, res, next) {
                     //console.log(decisionPool)
                 }
             )
-            console.log(decisionPool)
-            console.log(permitPolicy)
+           // console.log(decisionPool)
+            //console.log(permitPolicy)
             if(!(decisionPool.includes("Permit"))) {
                 return res.status(401).json({msg:"Access denied or access not applicable"});
             }
 
-            jwt.sign(
+            var access_token=jwt.sign(
                 {
                     expireIn: "1 day",
                     subject: claim.client_id,
-                    audience: "http://localhost:4990/patientrecord",
+                    audience: "http://localhost:4990/getResource",
                     issuer: "http://localhost:5000/authorization",
                     objectAttributes: permitPolicy.rules.objectAttributes,
                     actionAttributes: permitPolicy.rules.actionAttributes,
@@ -93,16 +94,43 @@ function RequestEvaluation (req, res, next) {
                 },
                 config.get('ASprivatekey'),
                 {algorithm: 'RS256'},
-                (err,token)=>{
+                /*(err)=>{
                     if (err) throw {
                         error:"token_generation_failed",
                         message:`${err.name}`,
                     };
                     //console.log(token);
-                    res.json({token})
-                }
+                }*/
             )
+            var hashAT=SHA256(access_token)
+            console.log(hashAT)
 
+            var ESO_token=jwt.sign(
+                {
+                    expireIn: "1 day",
+                    hashAT: hashAT,
+                    subject: "http://localhost:4990/getResource",
+                    audience: "http://localhost:4995/userathospital",
+                    issuer: "http://localhost:5000/authorization",
+                    action :["read"],
+                    environmentContext: permitPolicy.rules.environmentContext,
+                },
+                config.get('ASprivatekey'),
+                {algorithm: 'RS256'},
+                /*(err)=>{
+                    if (err) throw {
+                        error:"token_generation_failed",
+                        message:`${err.name}`,
+                    };
+                    //console.log(token);
+                }*/
+            )
+            //console.log(access_token)
+            //console.log(ESO_token)
+            return res.json({
+                access_token:access_token,
+                ESO_token:ESO_token
+            })
 
         }).catch(err=>res.status(400).json({msg:err.name}))
     //console.log(permitPolicy)
