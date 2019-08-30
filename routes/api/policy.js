@@ -29,8 +29,8 @@ router.post('/',PolicyValidation,(req,res)=>{
                 _.isEqual(subject.rules.environmentContext,rules.environmentContext)&&
                 _.isEqual(subject.rules.Default,rules.Default)){
 
-                    console.log(config.get("clientprivatekey").trim())
-                    console.log(config.get("clientprivatekey"))
+                    //console.log(config.get("clientprivatekey").trim())
+                    //console.log(config.get("clientprivatekey"))
 
                     return res.status(400).json({msg: 'policy already exist'});
 

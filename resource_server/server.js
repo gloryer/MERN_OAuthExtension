@@ -26,8 +26,8 @@ mongoose.connect(db,{
 
 //Use Routes
 
-app.use('/api/patientdata', require('./routes/api/patientdata'));
-app.use('/api/patientrecord', require('./routes/api/patientrecord'));
+app.use('/api/getResource', require('./routes/api/getResource'));
+app.use('/api/setResource', require('./routes/api/setResource'));
 
 
 /*

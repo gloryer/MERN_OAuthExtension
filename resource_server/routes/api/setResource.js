@@ -1,12 +1,12 @@
 const express =require('express');
 const router =express.Router();
-const PatientdataValidation = require('../../Middleware/PatientdataValidation');
+const resourceValidation = require('../../Middleware/resourceDataValidation');
 const _ = require("lodash");
 
 
 //Item Model
 
-const Patient =require('../../models/Patient');
+const Patient =require('../../models/resources');
 
 router.get('/',(req,res)=>{
     Patient.find()
@@ -15,28 +15,32 @@ router.get('/',(req,res)=>{
 
 
 //route GET api/users
-router.post('/',PatientdataValidation,(req,res)=>{
-    const{resource_set_id, resourceType, securityLabel, content}=req.body;
-    const patientId=resource_set_id.patientId
-    Patient.findOne({patientId})
+router.post('/',resourceValidation,(req,res)=>{
+    const{resource_set_id, resourceType, resourceDescription, content}=req.body;
+
+    Patient.findOne({resource_set_id})
         .then(data=>{
             //console.log(data)
             if (data){
-            data.forEach(eachData =>{
-                if (_.isEqual(resourceType,eachData.resourceType )&&
-                _.isEqual(securityLabel,eachData.securityLabel)&&
-                _.isEqual(content,eachData.content)){
+                if (_.isEqual(data.resourceType,resourceType )&&
+                _.isEqual(data.resourceDescription,resourceDescription)&&
+                _.isEqual(data.content,content)){
                     return res.status(400).json({msg:'Data already exist'});
                 }
 
                 //console.log(decisionPool)
-            })}
+            }else{
+                data.resourceType = resourceType
+                data.resourceDescription=resourceDescription
+                data.content=content
+                data.save().then(res.json(data))
+            }
 
 
             const newData = new Patient({
                 resource_set_id: resource_set_id,
                 resourceType:resourceType,
-                securityLabel: securityLabel,
+                resourceDescription: resourceDescription,
                 content:content,
             });
             newData.save()
@@ -44,7 +48,7 @@ router.post('/',PatientdataValidation,(req,res)=>{
                     res.json({
                         resource_set_id: data.resource_set_id,
                         resourceType: data.resourceType,
-                        securityLabel: data.securityLabel,
+                        resourceDescription: data. resourceDescription,
                         content: data.content
                     })
                 })

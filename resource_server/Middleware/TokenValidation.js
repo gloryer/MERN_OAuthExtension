@@ -2,7 +2,7 @@ const config=require('config');
 const jwt=require('jsonwebtoken');
 const _ = require("lodash");
 
-const Patient =require('../models/Patient');
+const Resource =require('../models/resources');
 //const JWT_BEARER_CLIENT_ASSERTION_TYPE= "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 const audience_address="http://localhost:4990/patientrecord";
 const issuer_address="http://localhost:5000/authorization"
@@ -20,8 +20,9 @@ function TokenValidation (req, res, next) {
 
     if(accessToken){
         try{
-            var token=jwt.verify(accessToken,config.get('jwtSecretRS'));
+            var token=jwt.verify(accessToken,config.get('ASpublickey'));
             req.token=token;
+            //console.log(token)
 
         }catch(err){
             return res.status(403).json({msg:`The token can not be verified because of ${ err.name}`})}
@@ -32,7 +33,7 @@ function TokenValidation (req, res, next) {
         Validation(token);
 
     }catch(err){
-        return res.status(400).json({msg: err.message});
+        return res.status(400).json({msg: err});
     }
 
     //console.log(permitPolicy)
@@ -45,8 +46,8 @@ function TokenValidation (req, res, next) {
 
 function Validation(token){
 
-    const {structured_scope} = token
-    const {resource_set_id, resourceType, securityLabel,actions}= structured_scope;
+    //const {structured_scope} = token
+    //const {resource_set_id, resourceType, securityLabel,actions}= structured_scope;
 
     if (token.audience !== audience_address) {
         throw {
@@ -58,12 +59,9 @@ function Validation(token){
             error: "bad_request",
             message: "Issuer verification failed",
         }
-    }else if (!structured_scope
-        ||!resource_set_id
-        ||!resource_set_id.patientId
-        ||!resourceType
-        ||!securityLabel
-        ||!actions){
+    }else if (!token.objectAttributes
+        ||!token.actionAttributes
+        ||!token.actionAttributes.actions){
         throw {
             error: "bad_request",
             message: "Incomplete information in the token",

@@ -1,35 +1,31 @@
 
-function PatientdataValidation(req, res, next) {
-    const{resource_set_id, resourceType, securityLabel, content}=req.body;
+function resourceValidation(req, res, next) {
+    const{resource_set_id, resourceType, content, resourceDescription}=req.body;
 
     // console.log(JSON.stringify(req.body));
     // next();
 
 
-    if(!resource_set_id||!resource_set_id.patientId){
-        return res.status(400).json({msg:"Must have resource_set_id (patientID) "});
+    if(!resource_set_id){
+        return res.status(400).json({msg:"Must have resource_set_id "});
     } else if(!resourceType ){
         return res.status(400).json({msg:"Must have resource Type."});
-    }else if (!securityLabel){
-        return res.status(400).json({msg:"Must have security Label"});
+    }else if (!resourceDescription){
+        return res.status(400).json({msg:"Must have resource description"});
     }else if (!content||! (content instanceof Object)) {
         return res.status(400).json({msg:"Must have 'content' with non-empty object."});
-    } else{
+    } /*else{
         try{
             resourceTypeValidation(resourceType);
         } catch(err){
             return res.status(400).json({msg: "Error in 'resourceType':" + err.message});
         }
-        try{
-            securityLabelValidation(securityLabel);
-        } catch(err){
-            return res.status(400).json({msg: "Error in 'securityLabel':" + err.message});
-        }
-    }
+    }*/
     next();
 
 }
 
+/*
 function resourceTypeValidation(resourceType) {
     const resourceList = ["Observation","Immunization"];
 
@@ -52,10 +48,11 @@ function securityLabelValidation(securityLabel) {
         }
     }
 }
+*/
 
 
 
 
 //res.status(400).json({msg: 'Token is not valid'});
 
-module.exports=PatientdataValidation;
+module.exports=resourceValidation;

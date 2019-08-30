@@ -80,7 +80,6 @@ function RequestEvaluation (req, res, next) {
             if(!(decisionPool.includes("Permit"))) {
                 return res.status(401).json({msg:"Access denied or access not applicable"});
             }
-            //return permitPolicy
 
             jwt.sign(
                 {
@@ -88,9 +87,9 @@ function RequestEvaluation (req, res, next) {
                     subject: claim.client_id,
                     audience: "http://localhost:4990/patientrecord",
                     issuer: "http://localhost:5000/authorization",
-                    objectAttributes: permitPolicy.objectAttributes,
-                    subjectAttributes: permitPolicy.subjectAttributes,
-                    environmentContext: permitPolicy.environmentContext,
+                    objectAttributes: permitPolicy.rules.objectAttributes,
+                    actionAttributes: permitPolicy.rules.actionAttributes,
+                    environmentContext: permitPolicy.rules.environmentContext,
                 },
                 config.get('ASprivatekey'),
                 {algorithm: 'RS256'},
@@ -277,7 +276,7 @@ function matchRules(claim,policy){
     }
 
 
-    console.log(matchedRule)
+    //console.log(matchedRule)
     if (matchedRule===true) {
         return rules.authorization
     }else{
@@ -286,75 +285,7 @@ function matchRules(claim,policy){
 
 }
 
-function subjectEvaluation (claim, rules) {
-    //console.log("yeah")
-    const {client_id} = claim;
-    const subject_id=client_id
-    var singleEvaluation = true;
-    try {
-        SubjectAttributes.find({subject_id})
-            .then(attributes => {
-                //console.log(attributes)
-               // console.log(Object.keys(rules.subjectAttributes))
-                //console.log(Object.keys(attributes[0].customizedAttributes))
-                //console.log(Object.keys(rules.subjectAttributes).every(element => {
-                    //Object.keys(attributes[0].customizedAttributes).includes(element)
-                //}))
-                if (Object.keys(rules.subjectAttributes).every(element =>
-                    Object.keys(attributes[0].customizedAttributes).includes(element)
-                )) {
-                    //console.log("yeah")
 
-                    Object.keys(rules.subjectAttributes).forEach(field =>
-                        singleEvaluation = singleEvaluation &&
-                        attributes[0].customizedAttributes[field].some(val =>
-                            rules.subjectAttributes[field].includes(val))
-                    )
-                    //console.log(singleEvaluation)
-                    return singleEvaluation
-                }else{
-                    return false
-                }
-
-
-            })
-    } catch (err) {
-        throw{
-            error: "SubjectAttributes evaluation failed",
-            message: `${err.name}`
-        }
-    }
-}
-
-function actionEvaluation (claim, rules) {
-
-    var singleEvaluation = true;
-    //console.log("hey")
-
-    try {
-        //console.log("hey")
-        //console.log(claim.structured_scope.actions)
-        //console.log(rules.actionAttributes.actions)
-        if (claim.structured_scope.actions.every(element =>
-            rules.actionAttributes.actions.includes(element)
-        )) {
-            //console.log("yeah")
-
-            claim.structured_scope.actions.forEach(action => {
-                singleEvaluation = singleEvaluation && (_.isEqual(claim.structured_scope[action], rules.actionAttributes[action]))
-            })
-            //console.log(singleEvaluation)
-            return singleEvaluation
-        } else {
-            return false
-        }
-    } catch (err) {
-        throw{
-            error: "action evaluation failed",
-            message: `${err.name}`
-        }
-    }
-}
 
 //res.status(400).json({msg: 'Token is not valid'});
 
