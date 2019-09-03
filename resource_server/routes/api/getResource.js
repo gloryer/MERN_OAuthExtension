@@ -3,7 +3,7 @@ const router =express.Router();
 const TokenValidation = require('../../Middleware/TokenValidation');
 //const ContextValidation=require('../../Middleware/ContextValidate')
 const _ = require("lodash");
-const axios =require("axios");
+//const axios =require("axios");
 
 
 //Item Model
@@ -13,8 +13,8 @@ const context ={result: 'True'}
 
 //route GET api/users
 router.get('/',TokenValidation, (req,res)=>{
-    console.log("enter")
-    const {objectAttributes,actionAttributes,environmenContext} = req.token1
+    //console.log("enter")
+    const {objectAttributes,actionAttributes} = req.token1
     const resourceType =objectAttributes.resourceType
     /*const resource_set_id =structured_scope.resource_set_id
     //const resourceType =structured_scope.resourceType
@@ -27,46 +27,24 @@ router.get('/',TokenValidation, (req,res)=>{
     Resource.find({resourceType})
         .then(data=>{
             //console.log(data)
-
-            let ContextUserAtHospital
-
             if (data) {
                 var content =[]
                 data.forEach(element=>{
                     content.push(element.content)
                 })
-                if (actionAttributes.actions.includes("view")) {
-                    if (environmenContext) {
 
-                        axios.post('http://localhost:4995/api/userathospital')
-                            .then(res => {
-                                //console.log(res.data)
-                                if ((_.isEqual(res.data, context))) {
-                                    ContextUserAtHospital = true
-                                }
-                                return ContextUserAtHospital;
-                            }).then(ContextUserAtHospital => {
-                            if (ContextUserAtHospital) {
-                                console.log("Context Valid")
-                                return res.status(400).json(content)
-                            } else {
-                                return res.status(400).json({msg: 'Context Info not valid'});
-                            }
-                        }).catch(err => {
-                            res.status(400).json({msg: err.name})
-                        })
-                    } else {
-                            return res.status(400).json(content)
-                    }
+                if (actionAttributes.actions.includes("view")) {
+                    return res.status(400).json(content)
                 } else {
                     return res.status(400).json({msg: 'action not allowed'});
                 }
-            }else{
+            }
+            if(!data){
                 return res.status(400).json({msg: 'resource not found'});
             }
 
 
-        })
+        }).catch(err=>res.status(400).json({msg:err}))
 });
 
 /*router.get('/',TokenValidation, (req,res)=>{
