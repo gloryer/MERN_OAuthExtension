@@ -103,7 +103,7 @@ function RequestEvaluation (req, res, next) {
                 }*/
             )
             var hashAT=SHA256(access_token)
-            console.log(hashAT)
+           // console.log(hashAT)
 
             var ESO_token=jwt.sign(
                 {
