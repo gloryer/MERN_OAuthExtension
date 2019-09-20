@@ -34,7 +34,10 @@ router.get('/',TokenValidation, (req,res)=>{
                 })
 
                 if (actionAttributes.actions.includes("view")) {
-                    return res.status(400).json(content)
+                    return res.status(200).json(
+                        {content:content,
+                            RS_sig:req.SigVal
+                    })
                 } else {
                     return res.status(400).json({msg: 'action not allowed'});
                 }

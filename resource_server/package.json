@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon --max-old-space-size=4076 server.js",
+    "dev": "concurrently \"npm run server\""
   },
   "author": "shuaili",
   "license": "MIT",

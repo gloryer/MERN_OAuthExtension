@@ -1,12 +1,12 @@
 const config=require('config');
 const jwt=require('jsonwebtoken');
 const _ = require("lodash");
-var SHA256 = require("crypto-js/sha256");
+//var SHA256 = require("crypto-js/sha256");
 const rsasign = require('jsrsasign')
 
 //const JWT_BEARER_CLIENT_ASSERTION_TYPE= "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 const audience_address_eso="http://localhost:4995/userathospital";
-const issuer_address="http://localhost:5000/authorization"
+const issuer_address="http://localhost:5000"
 const subject="http://localhost:4990/getResource"
 const accept_action=["read"]
 
@@ -14,6 +14,8 @@ function TokenValidation (req, res, next) {
     let eso_token=req.header('x-eso-token')
     let RS_sign=req.header('RS-sign')
 
+    console.log(RS_sign)
+    console.log(eso_token)
 
     if (!eso_token) {
         return res.status(401).json({msg: 'No ESO Token, authorization denied'});
@@ -22,7 +24,6 @@ function TokenValidation (req, res, next) {
     if (!RS_sign) {
         return res.status(401).json({msg: 'No RS signature, authorization denied'});
     }
-
     var sig = new rsasign.Signature({"alg": "SHA256withRSA"});
     sig.init(config.get('RSpublickey'));
     sig.updateString(eso_token);
@@ -31,14 +32,13 @@ function TokenValidation (req, res, next) {
     if (!isValid){
         return res.status(401).json({msg: 'Invalid signature, authorization denied'});
     }
-
-    //console.log(isValid)
+    console.log(isValid)
 
     if(eso_token){
         try{
             var token=jwt.verify(eso_token,config.get('ASpublickey'))
             req.token=token
-            //console.log(token)
+           // console.log(token)
 
         }catch(err){
             return res.status(403).json({msg:`The token can not be verified because of ${ err.name}`})}
@@ -53,7 +53,7 @@ function TokenValidation (req, res, next) {
     }
 
 
-    console.log("pass")
+    //console.log("pass")
     //return permitPolicy
     next()
 

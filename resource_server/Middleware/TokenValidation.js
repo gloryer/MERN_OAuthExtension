@@ -10,7 +10,7 @@ const rsasign = require('jsrsasign')
 //const JWT_BEARER_CLIENT_ASSERTION_TYPE= "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 const audience_address_rs="http://localhost:4990/getResource";
 const audience_address_eso="http://localhost:4995/userathospital"
-const issuer_address="http://localhost:5000/authorization"
+const issuer_address="http://localhost:5000"
 
 const context ={result: 'True'}
 function TokenValidation (req, res, next) {
@@ -61,6 +61,7 @@ function TokenValidation (req, res, next) {
     sig.init(config.get('RSprivatekey'))
     sig.updateString(eso_token)
     var SigVal =sig.sign()
+    req.SigVal=SigVal
     //Validation(token1,token2);
     //console.log (SigVal)
     let Context
@@ -72,20 +73,24 @@ function TokenValidation (req, res, next) {
         axios.defaults.headers.common['RS-sign']= SigVal;
         axios.defaults.headers.post['Content-Type']='application/json';
 
-
-    //console.log("yeah")
+    //console.log(eso_token)
+    //console.log(SigVal)
     axios.post()
         .then(res => {
-            console.log("yeah")
+            //console.log("yeah")
             //console.log(res.data)
             if ((_.isEqual(res.data, context))) {
                 Context = true
             }
             return Context
-        }).then(Context => {
+    }).then(Context => {
+        if(Context){
+            next()
+        }
         if (!Context) {
             return res.status(401).json({msg: 'Context Info not valid'});
         }
+
     }).catch(error=>{console.log(error)})
 
     }
@@ -97,7 +102,7 @@ function TokenValidation (req, res, next) {
 
         //console.log(permitPolicy)
         //return permitPolicy
-        next()
+
 
 
 }

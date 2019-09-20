@@ -6,6 +6,8 @@ const config=require('config');
 
 const app = express();
 const cors = require('cors');
+//var nodemon = require('nodemon');
+
 
 app.use(cors()) ;// Use this after the variable declaration
 
@@ -44,3 +46,5 @@ if(process.env.NODE_ENV==='production'){
 const port =process.env.PORT || 4995;
 
 app.listen(port,()=> console.log(`Server started on port ${port}`));
+
+process.on('SIGINT', () => { console.log("Bye bye!"); process.exit(); });
