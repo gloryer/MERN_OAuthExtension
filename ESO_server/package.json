@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "node --max-old-space-size=4076 server.js",
+    "server": "node server.js",
     "dev": "concurrently \"npm run server\""
   },
   "author": "shuaili",

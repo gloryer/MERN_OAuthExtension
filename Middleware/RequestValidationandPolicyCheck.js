@@ -23,7 +23,7 @@ function RequestEvaluation (req, res, next) {
 
 
     //console.log(claimToken)
-
+    var startTimeClient = new Date()
     if (!claimToken) {
         return res.status(401).json({msg: 'No claim token, authorization denied'});
     }
@@ -54,8 +54,9 @@ function RequestEvaluation (req, res, next) {
         return res.status(400).json({msg: err.message});
     }
 
-
+    var endTimeClient =new Date() -startTimeClient
     // Access evaluation and token generation if access is allowed by policy
+    var startTimePolicy = new Date()
     let permitPolicy
     var decisionPool=[];
     const {application}=req.decoded
@@ -81,13 +82,15 @@ function RequestEvaluation (req, res, next) {
             if(!(decisionPool.includes("Permit"))) {
                 return res.status(401).json({msg:"Access denied or access not applicable"});
             }
+            var endTimePolicy =new Date() -startTimePolicy
+            //var startTime1 = new Date();
 
             var access_token=jwt.sign(
                 {
                     expireIn: "1 day",
                     subject: claim.client_id,
-                    audience: "http://localhost:4990/getResource",
-                    issuer: "http://localhost:5000",
+                    audience: "https://localhost:4990/getResource",
+                    issuer: "https://localhost:5000",
                     objectAttributes: permitPolicy.rules.objectAttributes,
                     actionAttributes: permitPolicy.rules.actionAttributes,
                     environmentContext: permitPolicy.rules.environmentContext,
@@ -102,6 +105,10 @@ function RequestEvaluation (req, res, next) {
                     //console.log(token);
                 }*/
             )
+            //var endTime1 = new Date() - startTime1;
+
+            //var startTime2=new Date();
+
             var hashAT=SHA256(access_token)
            // console.log(hashAT)
 
@@ -109,9 +116,9 @@ function RequestEvaluation (req, res, next) {
                 {
                     expireIn: "1 day",
                     hashAT: hashAT,
-                    subject: "http://localhost:4990/getResource",
-                    audience: "http://localhost:4995/userathospital",
-                    issuer: "http://localhost:5000",
+                    subject: "https://localhost:4990/getResource",
+                    audience: "https://localhost:4995/userathospital",
+                    issuer: "https://localhost:5000",
                     action :["read"],
                     environmentContext: permitPolicy.rules.environmentContext,
                 },
@@ -125,11 +132,14 @@ function RequestEvaluation (req, res, next) {
                     //console.log(token);
                 }*/
             )
+            //var endTime2 = new Date()-startTime2
             //console.log(access_token)
             //console.log(ESO_token)
             return res.json({
                 access_token:access_token,
-                ESO_token:ESO_token
+                ESO_token:ESO_token,
+                clientTime: endTimeClient,
+                policyTime:endTimePolicy
             })
 
         }).catch(err=>res.status(400).json({msg:err.name}))

@@ -1,5 +1,7 @@
 const express=require('express');
 const mongoose=require('mongoose');
+const https=require('https')
+const fs=require('fs')
 
 const path =require('path');
 const config=require('config');
@@ -44,6 +46,10 @@ if(process.env.NODE_ENV==='production'){
 
 const port =process.env.PORT || 5000;
 
-app.listen(port,()=> console.log(`Server started on port ${port}`));
+https.createServer({
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.cert')
+},app).listen(port,()=> console.log(`Server started on port ${port}`));
+
 process.on('SIGINT', () => { console.log("Bye bye!"); process.exit(); });
 

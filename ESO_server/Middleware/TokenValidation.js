@@ -5,17 +5,17 @@ const _ = require("lodash");
 const rsasign = require('jsrsasign')
 
 //const JWT_BEARER_CLIENT_ASSERTION_TYPE= "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
-const audience_address_eso="http://localhost:4995/userathospital";
-const issuer_address="http://localhost:5000"
-const subject="http://localhost:4990/getResource"
+const audience_address_eso="https://localhost:4995/userathospital";
+const issuer_address="https://localhost:5000"
+const subject="https://localhost:4990/getResource"
 const accept_action=["read"]
 
 function TokenValidation (req, res, next) {
     let eso_token=req.header('x-eso-token')
     let RS_sign=req.header('RS-sign')
 
-    console.log(RS_sign)
-    console.log(eso_token)
+    //console.log(RS_sign)
+    //console.log(eso_token)
 
     if (!eso_token) {
         return res.status(401).json({msg: 'No ESO Token, authorization denied'});
@@ -24,15 +24,27 @@ function TokenValidation (req, res, next) {
     if (!RS_sign) {
         return res.status(401).json({msg: 'No RS signature, authorization denied'});
     }
-    var sig = new rsasign.Signature({"alg": "SHA256withRSA"});
-    sig.init(config.get('RSpublickey'));
-    sig.updateString(eso_token);
-    var isValid = sig.verify(RS_sign);
+    //var sig = new rsasign.Signature({"alg": "SHA256withRSA"});
+    //sig.init(config.get('RSpublickey'));
+    //sig.updateString(eso_token);
+    //var isValid = sig.verify(RS_sign);
+
+    try{
+        var tokenToBeValidate=jwt.verify(RS_sign,config.get('RSpublickey'))
+        //req.token=token
+        //console.log(tokenToBeValidate)
+        var isValid=_.isEqual(tokenToBeValidate["eso-token"],eso_token)
+        //console.log(isValid)
+
+
+    }catch(err){
+        return res.status(403).json({msg:`The token can not be verified because of ${ err.name}`})}
 
     if (!isValid){
         return res.status(401).json({msg: 'Invalid signature, authorization denied'});
     }
-    console.log(isValid)
+
+    //console.log(isValid)
 
     if(eso_token){
         try{

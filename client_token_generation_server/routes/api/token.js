@@ -26,7 +26,7 @@ router.post('/',(req,res)=> {
         {
             expireIn: "30 days",
             client_id: client_id,
-            audience: "http://localhost:5000/authorization",
+            audience: "https://localhost:5000/authorization",
             issuer: issuer,
             objectAttributes: objectAttributes,
             structured_scope: structured_scope,

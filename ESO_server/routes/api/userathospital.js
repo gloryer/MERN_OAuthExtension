@@ -15,10 +15,10 @@ const TokenValidation=require('../../Middleware/TokenValidation')
 
 //route GET api/users
 router.post('/', TokenValidation,(req,res)=>{
-    console.log("yeah")
-    ///console.log("yeah")
+    //console.log("yeah")
+    //console.log("yeah")
 
-    return res.status(200).json({result:"False"})
+    return res.status(200).json({result:"True"})
 });
 
 

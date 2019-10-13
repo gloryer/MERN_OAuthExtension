@@ -24,6 +24,7 @@ router.get('/',TokenValidation, (req,res)=>{
     //console.log(resourceType)
 
     //console.log(ContextUserAtHospital)post
+    var starTimeResource =new Date()
     Resource.find({resourceType})
         .then(data=>{
             //console.log(data)
@@ -34,9 +35,18 @@ router.get('/',TokenValidation, (req,res)=>{
                 })
 
                 if (actionAttributes.actions.includes("view")) {
-                    return res.status(200).json(
-                        {content:content,
-                            RS_sig:req.SigVal
+                    var endTimeResource = new Date()-starTimeResource
+                    return res.status(200).json({
+                        content:content,
+                        AT:req.endTimeAT,
+                        ESO:req.endTimeESO,
+                        Hash:req.endTimeHash,
+                        Validation:req.endTimeValidation,
+                        //Context:req.endTimeContext,
+                        Resource:endTimeResource,
+                        //Middleware:req.endTimeMiddleware,
+                        RS:req.endTimeRS,
+                        Server:req.endTimeContextServer
                     })
                 } else {
                     return res.status(400).json({msg: 'action not allowed'});
