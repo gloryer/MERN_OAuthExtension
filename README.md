@@ -301,13 +301,9 @@ Client sends post request to `https://localhost:5000/api/authorization`. The hea
 - `grant-type`: client_credentials
 - `client-assertion-type`: urn:ietf:params:oauth:client-assertion-type:jwt-bearer
 - `client-assertion`:
- eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjMwIGRheXMiLCJjbGllbnRfa
-WQiOiIxMDAwIiwiYXVkaWVuY2UiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwL2F1dGhv
-cml6YXRpb24iLCJpc3N1ZXIiOiJKb2huIiwib2JqZWN0QXR0cmlidXRlcyI6eyJyZXNvdXJjZ
-VR5cGUiOlsiSGVhcnQiXX0sInN0cnVjdHVyZWRfc2NvcGUiOnsiYWN0aW9ucyI6WyJ2a
-WV3Il19LCJhcHBsaWNhdGlvbiI6IkhlYWx0aCIsImlhdCI6MTU3MDk5MzI0NH0.3Mk4oK
-fLo8c6sRbKnnVifgfc0CmrLmGn44QuwytKH5JaMmqgbZ9W6e1TJEojgP0WPftkxaYg5LjV
-CS4Q2Dp6hQ
+```
+eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjMwIGRheXMiLCJjbGllbnRfaWQiOiIxMDAwIiwiYXVkaWVuY2UiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwL2F1dGhvcml6YXRpb24iLCJpc3N1ZXIiOiJKb2huIiwib2JqZWN0QXR0cmlidXRlcyI6eyJyZXNvdXJjZVR5cGUiOlsiSGVhcnQiXX0sInN0cnVjdHVyZWRfc2NvcGUiOnsiYWN0aW9ucyI6WyJ2aWV3Il19LCJhcHBsaWNhdGlvbiI6IkhlYWx0aCIsImlhdCI6MTU3MDk5MzI0NH0.3Mk4oKfLo8c6sRbKnnVifgfc0CmrLmGn44QuwytKH5JaMmqgbZ9W6e1TJEojgP0WPftkxaYg5LjVCS4Q2Dp6hQ
+```
 
 Decoded client-assertion: 
 
@@ -338,11 +334,9 @@ For the purpose of testing, we use [self-generated certificates] to establish TL
 #### Response from the server
 ```json
 {
-
 "access_token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5Iiwic3ViamVjdCI6IjEwMDAiLCJhdWRpZW5jZSI6Imh0dHBzOi8vbG9jYWxob3N0OjQ5OTAvZ2V0UmVzb3VyY2UiLCJpc3N1ZXIiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwL2F1dGhvcml6YXRpb24iLCJvYmplY3RBdHRyaWJ1dGVzIjp7InJlc291cmNlVHlwZSI6WyJIZWFydCJdfSwiYWN0aW9uQXR0cmlidXRlcyI6eyJhY3Rpb25zIjpbInZpZXciXX0sImVudmlyb25tZW50Q29udGV4dCI6WyJjbGllbnRsb2NhdGlvbmhvc3BpdGFsIl0sImlhdCI6MTU4MTYyNjE0Mn0.U6rEoeH107SKloOnCQNsgsbcs6pavIUrLmVeRiFph_8oykYhrOfd8uiYtUJRlCR94HQ-y-DBd5HyNllj62ZdIw",
 
 "ESO_token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5IiwiaGFzaEFUIjp7IndvcmRzIjpbLTIyMzExMzkwLC0yODExMzQyNzAsMTUyNTUyODMzMiwtODE2MDg1MTkwLC0xOTM0MTE3Nzg4LDIxMzkwOTE2MjUsMTIzNzYwODMxOCw3MDUwOTA3NDJdLCJzaWdCeXRlcyI6MzJ9LCJzdWJqZWN0IjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDk5MC9nZXRSZXNvdXJjZSIsImF1ZGllbmNlIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDk5NS91c2VyYXRob3NwaXRhbCIsImlzc3VlciI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDAvYXV0aG9yaXphdGlvbiIsImFjdGlvbiI6WyJyZWFkIl0sImVudmlyb25tZW50Q29udGV4dCI6WyJjbGllbnRsb2NhdGlvbmhvc3BpdGFsIl0sImlhdCI6MTU4MTYyNjE0Mn0.p8it7QlQNNvi8PmDfxBK3k_5oRSqAMSTD04VEQkm1K54ZZxouIFShxt35NALNu5i7c6Af8xUkvyA4DLyg6BYvg"
-
 }
 
 ```
@@ -463,42 +457,21 @@ MongoDB Connected...
 In the following sections, we will give some necesarry explanation for the back-end server implementation, followed by examples of API usage.  If you want to start testing the APIs right away, please go to  examples of API usage. 
 
 ### Overview
-The resource server is implemented as a node.js server, listened on port 4990 in the local computer. Object attributes are typically bound to their objects through referencing, by embedding them  
-within the object. The resources are stored together with their attributes. The policy enforcement  
-point is implemented on the RS. Upon receiving the tokens from the client, the RS verifies the  
-signatures of each token, contents of each token, and checks if two tokens are bound. If context  
-validation is required, the RS sends an HTTPS post request to fetch the internal state of the ESO.  
-Once all these steps are successful, the RS may query the database and return the resources or  
-provides services to the client. Because the services and the resources provided by the RS vary  
-from one application to another, we wrap all the token validations and context checking duties into  
-an Express middleware. Programmers can easily invoke this independent module when writing  
-any customized API for the RS.
+The resource server is implemented as a node.js server, listened on port 4990 in the local computer. Object attributes are typically bound to their objects through referencing, by embedding them  within the object. The resources are stored together with their attributes. The policy enforcement  point is implemented on the RS. Upon receiving the tokens from the client, the RS verifies the  signatures of each token, contents of each token, and checks if two tokens are bound. If context validation is required, the RS sends an HTTPS post request to fetch the internal state of the ESO.  Once all these steps are successful, the RS may query the database and return the resources or provides services to the client. Because the services and the resources provided by the RS vary  from one application to another, we wrap all the token validations and context checking duties into  an Express middleware. Programmers can easily invoke this independent module when writing any customized API for the RS.
 
 ### Example of /api/getResource
 #### Sending the request 
 Client sends post request to `https://localhost:4990/api/getResource`. The header of this request is:
 
 - `Content-Type`: client_credentials
-- `x-oauth-token`: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5Iiwic3ViamVjdCI6IjE
-wMDAiLCJhdWRpZW5jZSI6Imh0dHBzOi8vbG9jYWxob3N0OjQ5OTAvZ2V0UmVzb3Vy
-Y2UiLCJpc3N1ZXIiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwL2F1dGhvcml6YXRpb24iL
-CJvYmplY3RBdHRyaWJ1dGVzIjp7InJlc291cmNlVHlwZSI6WyJIZWFydCJdfSwiYWN0aW
-9uQXR0cmlidXRlcyI6eyJhY3Rpb25zIjpbInZpZXciXX0sImVudmlyb25tZW50Q29udGV4dC
-I6WyJjbGllbnRsb2NhdGlvbmhvc3BpdGFsIl0sImlhdCI6MTU3MDk5MzI1NH0.FA3CDKBQ
-SGcZ6pHNT0T3E4g_UPedYf7GQ_0i_peUEyyhwWJVEQk7JTgsh_baklHQUAK3_UolykHK
-eJUHcGho2A
+- `x-oauth-token`:
+```
+eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5Iiwic3ViamVjdCI6IjEwMDAiLCJhdWRpZW5jZSI6Imh0dHBzOi8vbG9jYWxob3N0OjQ5OTAvZ2V0UmVzb3VyY2UiLCJpc3N1ZXIiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwL2F1dGhvcml6YXRpb24iLCJvYmplY3RBdHRyaWJ1dGVzIjp7InJlc291cmNlVHlwZSI6WyJIZWFydCJdfSwiYWN0aW9uQXR0cmlidXRlcyI6eyJhY3Rpb25zIjpbInZpZXciXX0sImVudmlyb25tZW50Q29udGV4dCI6WyJjbGllbnRsb2NhdGlvbmhvc3BpdGFsIl0sImlhdCI6MTU3MDk5MzI1NH0.FA3CDKBQSGcZ6pHNT0T3E4g_UPedYf7GQ_0i_peUEyyhwWJVEQk7JTgsh_baklHQUAK3_UolykHKeJUHcGho2A
+```
 - `x-eso-token`:
-eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5IiwiaGFzaEFUIjp7In
-dvcmRzIjpbNjk4NTcxODcyLC0xNzM2NTcxNzYyLC0yMTA0MzU0MTA2LDE5NzMxOTk2
-MjYsMTczNDMxNTczOSwtNzk5MDM2OTIsLTY1NjAzNTA0NywtMTEyMDY1MDM4MF
-0sInNpZ0J5dGVzIjozMn0sInN1YmplY3QiOiJodHRwczovL2xvY2FsaG9zdDo0OTkwL2dld
-FJlc291cmNlIiwiYXVkaWVuY2UiOiJodHRwczovL2xvY2FsaG9zdDo0OTk1L3VzZXJhdGh
-vc3BpdGFsIiwiaXNzdWVyIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMC9hdXRob3Jpem
-F0aW9uIiwiYWN0aW9uIjpbInJlYWQiXSwiZW52aXJvbm1lbnRDb250ZXh0IjpbImNsaW
-VudGxvY2F0aW9uaG9zcGl0YWwiXSwiaWF0IjoxNTcwOTkzMjU0fQ.Rylr1No1AUSpVzc
-9Mrv258olyxp4zQwf5AHL8DxAhwkviNIS9Rk3m0HRBlqx9EGC7PBrYXBCsXEjgq8XWu
-LpXg
-
+ ```
+eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5IiwiaGFzaEFUIjp7IndvcmRzIjpbNjk4NTcxODcyLC0xNzM2NTcxNzYyLC0yMTA0MzU0MTA2LDE5NzMxOTk2MjYsMTczNDMxNTczOSwtNzk5MDM2OTIsLTY1NjAzNTA0NywtMTEyMDY1MDM4MF0sInNpZ0J5dGVzIjozMn0sInN1YmplY3QiOiJodHRwczovL2xvY2FsaG9zdDo0OTkwL2dldFJlc291cmNlIiwiYXVkaWVuY2UiOiJodHRwczovL2xvY2FsaG9zdDo0OTk1L3VzZXJhdGhvc3BpdGFsIiwiaXNzdWVyIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMC9hdXRob3JpemF0aW9uIiwiYWN0aW9uIjpbInJlYWQiXSwiZW52aXJvbm1lbnRDb250ZXh0IjpbImNsaWVudGxvY2F0aW9uaG9zcGl0YWwiXSwiaWF0IjoxNTcwOTkzMjU0fQ.Rylr1No1AUSpVzc9Mrv258olyxp4zQwf5AHL8DxAhwkviNIS9Rk3m0HRBlqx9EGC7PBrYXBCsXEjgq8XWuLpXg
+```
 Decoded x-oauth-token:  
 
 ````json
@@ -556,7 +529,7 @@ Decoded x-eso-token:
 To issue the https request to the authorization server, we recommend using [Postman] tool. 
 For the purpose of testing, we use [self-generated certificates] to establish TLS connection between the client and the server. 
 
-To check the context, you must run the ESO server. The ESO server listens any request from the resource server. Please see blow section for how to run the ESO server.  
+To check the context, you must run the ESO server. The ESO server listens any request from the resource server. Please see blow sections for installation of the ESO server.  
 
 #### Response from the server
 
@@ -680,34 +653,21 @@ MongoDB Connected...
 In the following sections, we will give some necesarry explanation for the back-end server implementation, followed by examples of API usage.  If you want to start testing the APIs right away, please go to  examples of API usage. 
 
 ### Overview
-The ESO server is implemented as a node.js server, listened on port 4995 in the local computer. We do not implement any underlying protocols for tracking environment context as it is out of the  
-scope of our protocol. After successful validation of the ESO token and the RS signature, the ESO  
-server sends a response {“Contex” : “True”} or {“Contex” : “False”} to the RS. 
+The ESO server is implemented as a node.js server, listened on port 4995 in the local computer. We do not implement any underlying protocols for tracking environment context as it is out of the scope of our protocol. After successful validation of the ESO token and the RS signature, the ESO server sends a response {“Contex” : “True”} or {“Contex” : “False”} to the RS. 
 
 ### Example of /api/userathospital
 #### Sending the request 
 Resource server sends post request to `https://localhost:4995/api/userathospital`. The header of this request is:
 
 - `Content-Type`: application/json
-- `x-eso-token`: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5Iiwic3ViamVjdCI6IjE
-wMDAiLCJhdWRpZW5jZSI6Imh0dHBzOi8vbG9jYWxob3N0OjQ5OTAvZ2V0UmVzb3Vy
-Y2UiLCJpc3N1ZXIiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwL2F1dGhvcml6YXRpb24iL
-CJvYmplY3RBdHRyaWJ1dGVzIjp7InJlc291cmNlVHlwZSI6WyJIZWFydCJdfSwiYWN0aW
-9uQXR0cmlidXRlcyI6eyJhY3Rpb25zIjpbInZpZXciXX0sImVudmlyb25tZW50Q29udGV4dC
-I6WyJjbGllbnRsb2NhdGlvbmhvc3BpdGFsIl0sImlhdCI6MTU3MDk5MzI1NH0.FA3CDKBQ
-SGcZ6pHNT0T3E4g_UPedYf7GQ_0i_peUEyyhwWJVEQk7JTgsh_baklHQUAK3_UolykHK
-eJUHcGho2A
+- `x-eso-token`: 
+```
+eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5Iiwic3ViamVjdCI6IjEwMDAiLCJhdWRpZW5jZSI6Imh0dHBzOi8vbG9jYWxob3N0OjQ5OTAvZ2V0UmVzb3VyY2UiLCJpc3N1ZXIiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwL2F1dGhvcml6YXRpb24iLCJvYmplY3RBdHRyaWJ1dGVzIjp7InJlc291cmNlVHlwZSI6WyJIZWFydCJdfSwiYWN0aW9uQXR0cmlidXRlcyI6eyJhY3Rpb25zIjpbInZpZXciXX0sImVudmlyb25tZW50Q29udGV4dCI6WyJjbGllbnRsb2NhdGlvbmhvc3BpdGFsIl0sImlhdCI6MTU3MDk5MzI1NH0.FA3CDKBQSGcZ6pHNT0T3E4g_UPedYf7GQ_0i_peUEyyhwWJVEQk7JTgsh_baklHQUAK3_UolykHKeJUHcGho2A
+```
 - `RS-sign`:
-eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5IiwiaGFzaEFUIjp7In
-dvcmRzIjpbNjk4NTcxODcyLC0xNzM2NTcxNzYyLC0yMTA0MzU0MTA2LDE5NzMxOTk2
-MjYsMTczNDMxNTczOSwtNzk5MDM2OTIsLTY1NjAzNTA0NywtMTEyMDY1MDM4MF
-0sInNpZ0J5dGVzIjozMn0sInN1YmplY3QiOiJodHRwczovL2xvY2FsaG9zdDo0OTkwL2dld
-FJlc291cmNlIiwiYXVkaWVuY2UiOiJodHRwczovL2xvY2FsaG9zdDo0OTk1L3VzZXJhdGh
-vc3BpdGFsIiwiaXNzdWVyIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMC9hdXRob3Jpem
-F0aW9uIiwiYWN0aW9uIjpbInJlYWQiXSwiZW52aXJvbm1lbnRDb250ZXh0IjpbImNsaW
-VudGxvY2F0aW9uaG9zcGl0YWwiXSwiaWF0IjoxNTcwOTkzMjU0fQ.Rylr1No1AUSpVzc
-9Mrv258olyxp4zQwf5AHL8DxAhwkviNIS9Rk3m0HRBlqx9EGC7PBrYXBCsXEjgq8XWu
-LpXg
+ ```
+eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVJbiI6IjEgZGF5IiwiaGFzaEFUIjp7IndvcmRzIjpbNjk4NTcxODcyLC0xNzM2NTcxNzYyLC0yMTA0MzU0MTA2LDE5NzMxOTk2MjYsMTczNDMxNTczOSwtNzk5MDM2OTIsLTY1NjAzNTA0NywtMTEyMDY1MDM4MF0sInNpZ0J5dGVzIjozMn0sInN1YmplY3QiOiJodHRwczovL2xvY2FsaG9zdDo0OTkwL2dldFJlc291cmNlIiwiYXVkaWVuY2UiOiJodHRwczovL2xvY2FsaG9zdDo0OTk1L3VzZXJhdGhvc3BpdGFsIiwiaXNzdWVyIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMC9hdXRob3JpemF0aW9uIiwiYWN0aW9uIjpbInJlYWQiXSwiZW52aXJvbm1lbnRDb250ZXh0IjpbImNsaWVudGxvY2F0aW9uaG9zcGl0YWwiXSwiaWF0IjoxNTcwOTkzMjU0fQ.Rylr1No1AUSpVzc9Mrv258olyxp4zQwf5AHL8DxAhwkviNIS9Rk3m0HRBlqx9EGC7PBrYXBCsXEjgq8XWuLpXg
+```
 
 
 To issue the https request to the authorization server, we recommend using [Postman] tool. 
@@ -719,9 +679,9 @@ Server returns { result:"True" }
 
 
 
-
 <!---### Example of Accessing Patient Data
-The RO or admistrator stores the patient data as well as the attributes in RS.  If a client possesses a valid token and required environment conditions are satisfied, RS will release all  the patient records with an attribute of "ResourceType="Heart"". --->
+The RO or admistrator stores the patient data as well as the attributes in RS.  If a client possesses a valid token and required environment conditions are satisfied, RS will release all  the patient records with an attribute of "ResourceType="Heart"".
+-->
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
@@ -755,3 +715,5 @@ The RO or admistrator stores the patient data as well as the attributes in RS.  
    [Installing node.js and npm]: <https://treehouse.github.io/installation-guides/windows/node-windows.html>
    [JWT]: <https://tools.ietf.org/html/rfc7519](https://tools.ietf.org/html/rfc7519>
    [self-generated certificates]: <https://flaviocopes.com/express-https-self-signed-certificate/>
+   
+ 
