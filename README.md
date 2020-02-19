@@ -9,7 +9,7 @@ The proposed context-aware OAuth protocol has been implemented and can be found 
   
 Note that we use HTTP as the communication protocol in the implementation. 
 Please refer to `griffin_doc.pdf` for the full documentation. 
-This implementation guide will use the terminology in protocol design. 
+This implementation guide will use the terminologies in the protocol design. 
 
 
 ## Tech
@@ -649,8 +649,6 @@ MongoDB Connected...
 ### API Reference
 - `/api/userathopital`: Resource server sends a get request to this API to query if the client is located at the hospital.  If the tokens within this request is valid, the ESO server responds true.
 
-
-In the following sections, we will give some necesarry explanation for the back-end server implementation, followed by examples of API usage.  If you want to start testing the APIs right away, please go to  examples of API usage. 
 
 ### Overview
 The ESO server is implemented as a node.js server, listened on port 4995 in the local computer. We do not implement any underlying protocols for tracking environment context as it is out of the scope of our protocol. After successful validation of the ESO token and the RS signature, the ESO server sends a response {“Contex” : “True”} or {“Contex” : “False”} to the RS. 
